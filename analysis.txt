@@ -134,7 +134,7 @@ NaCl: 4
 
 Water: 128
 
-Ratio water to gelatin 0.109375
+Ratio gelatin to water 0.109375
 (Recommend 128.440366972 mils water
 Ran out of silver. Would need 7.05098092691 more grams.
 Best guess acidity: 11.5576613588
@@ -157,7 +157,7 @@ KBr: 1
 
 NaCl: 2
 
-Water: 130
+Water: 120 + 10
 
 HCl: 0.4
 
