@@ -2,12 +2,12 @@ module SilverGelatin where
 -- http://www.tcs.hut.fi/Studies/T-79.186/2004/lecture3.pdf
 -- Let AP be a non-empty set of atomic propositions A Kripke structure is a tuple M = (S,s^0,R,L), Where
 --  S is a finite set of states
---  s^0∈S is an initial state
---  R:S×S: is a transition relation, for which it holds that ∀s∈S:∃s′∈S:(s,s′)∈R and
---  L:S→2^(AP): is labeling, a function which labels each state with the atomic propositions which hold in that state.
+--  s^0 in S is an initial state
+--  R:S X S: is a transition relation, for which it holds that for all s in S: there exists s` in S:(s,s`) in R and
+--  L:S->2^(AP): is labeling, a function which labels each state with the atomic propositions which hold in that state.
 
--- A path π in a Kripke structure M = (S,s^0,R,L) is an infinite sequence of states,
--- π=s0 s1 s2..., such that s0∈I and T(si, si+1)for all i≥0.
+-- A path pi in a Kripke structure M = (S,s^0,R,L) is an infinite sequence of states,
+-- pi=s0 s1 s2..., such that s0 in I and T(si, si+1)for all i>=0.
 
 -- States are emulsion making steps
 -- Initial states are unmixed states
@@ -15,23 +15,49 @@ module SilverGelatin where
 -- labelling function is the properties (propositions) at each state. Temperature, reactant quantities, etc.
 
 -- Emulsion
+
+data Quantity = Grams {amount :: Float} | Ml {amount :: Float} deriving (Eq, Show, Read)  -- quantity, quantity
+
+type Water = Quantity
+type KI = Quantity
+type KBr = Quantity
+type NaCl = Quantity
+
+type Silver = Quantity
+data ChemicalModifier = ChemicalModifier {name :: String, molWeight :: Float, quantity :: Quantity} deriving (Eq, Show, Read) -- Amt, Name, Molecular weight
+type Acid = ChemicalModifier
+type Modifier = ChemicalModifier
+
 data Salt = KI | KBr | NaCl deriving (Eq, Show, Read, Ord) -- order from solubility and reaction preference.
 
-molecularWeight :: Salt -> Float
-molecularWeight KI = 166.0028
-molecularWeight KBr = 119.002
-molecularWeight NaCl = 58.44
+data Chemical = Salt Salt | Acid Acid | Modifier Modifier | Silver Silver | Water Water
+
+modifierMW :: Modifier -> Float
+modifierMW = molWeight
+
+molecularWeight :: Chemical -> Float
+molecularWeight (Salt x) = (case x of KI -> 166.0028
+                                      KBr -> 119.002
+                                      NaCl -> 58.44)
+molecularWeight (Acid x) = modifierMW x
+molecularWeight (Modifier x) = modifierMW x 
+molecularWeight (Silver x) = 169.87
+molecularWeight (Water x) = 18.01528
+
 
 -- Kripke
-data State = Gelatin | Precipitation | Wash | PrecipitationWash | AfterRipening | Done deriving (Eq, Show, Read)
+data State = Gelatin  | Precipitation | Wash | PrecipitationWash | AfterRipening | Done deriving (Eq, Show, Read)
 
 type Initial = State
 
-transitions :: a -> State -> State
+-- transitions :: State -> State
 
-temperature :: a -> State -> Float
-time :: a -> State -> Int
-silverAdded :: a -> State -> Float
-saltAdded :: a -> State -> Salt -> Float
-waterAdded :: a -> State -> Float
-chemicalsAdded :: a -> State -> [String]
+-- temperature :: State -> Float
+-- time :: State -> Int
+-- silverAdded :: State -> Float
+-- saltAdded :: State -> Salt
+-- waterAdded :: State -> Float
+-- chemicalsAdded :: State -> [String]
+
+-- type Emulsion = [State] State [State -> State] 
+-- States, Initial State, Transitions, Labeling

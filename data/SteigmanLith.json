@@ -12,7 +12,7 @@
         "Name": "HCl",
         "Quantity": 2.0
       },
-      "Chemicals":{
+      "ChemicalAdded":{
           "CdCl2":{
             "Measurement":"grams",
             "Quantity":0.4
@@ -45,7 +45,7 @@
         "Name": "HCl",
         "Quantity": 2.0
       },
-      "Chemicals":{
+      "ChemicalAdded":{
           "CdCl2":{
             "Measurement":"grams",
             "Quantity":0.4
@@ -81,7 +81,7 @@
         "Name": "HCl",
         "Quantity": 2.0
       },
-      "Chemicals":{
+      "ChemicalAdded":{
           "CdCl2":{
             "Measurement":"grams",
             "Quantity":0.7
@@ -118,7 +118,7 @@
         "Name": "HCl",
         "Quantity": 2.0
       },
-      "Chemicals":{
+      "ChemicalAdded":{
           "CdCl2":{
             "Measurement":"grams",
             "Quantity":0.7
@@ -155,7 +155,7 @@
         "Name": "HCl",
         "Quantity": 2.0
       },
-      "Chemicals":{
+      "ChemicalAdded":{
           "CdCl2":{
             "Measurement":"grams",
             "Quantity":0.7
@@ -196,7 +196,7 @@
         "Name": "HCl",
         "Quantity": 2.0
       },
-      "Chemicals":{
+      "ChemicalAdded":{
           "CdCl2":{
             "Measurement":"grams",
             "Quantity":0.7
@@ -233,7 +233,7 @@
         "Name": "HCl",
         "Quantity": 2.0
       },
-      "Chemicals":{
+      "ChemicalAdded":{
           "CdCl2":{
             "Measurement":"grams",
             "Quantity":0.7
@@ -270,7 +270,7 @@
         "Name": "HCl",
         "Quantity": 2.0
       },
-      "Chemicals":{
+      "ChemicalAdded":{
           "CdCl2":{
             "Measurement":"grams",
             "Quantity":0.7
