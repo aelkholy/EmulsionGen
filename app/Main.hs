@@ -1,7 +1,13 @@
 module Main where
 
-import Lib
-
+import SilverGelatin
+-- FROM STACKAGE
+import System.Environment
 
 main :: IO ()
-main = someFunc
+main = do
+    args <- getArgs
+    case args of
+      [] -> error "must supply a file to open"
+      [arg] -> do handle <- openFile arg ReadMode
+      _ -> error "too many arguments"

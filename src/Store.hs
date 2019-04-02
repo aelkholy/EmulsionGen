@@ -1,5 +1,5 @@
-module Lib
-    ( someFunc
+module Store
+    ( store
     ) where
 
 someFunc :: IO ()

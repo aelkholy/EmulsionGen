@@ -1,4 +1,4 @@
-module Flow where
+module SilverGelatin where
 -- http://www.tcs.hut.fi/Studies/T-79.186/2004/lecture3.pdf
 -- Let AP be a non-empty set of atomic propositions A Kripke structure is a tuple M = (S,s^0,R,L), Where
 --  S is a finite set of states
@@ -23,7 +23,7 @@ molecularWeight KBr = 119.002
 molecularWeight NaCl = 58.44
 
 -- Kripke
-data State = Gelatin | Precipitation | Wash | AfterRipening | deriving (Eq, Show, Read)
+data State = Gelatin | Precipitation | Wash | PrecipitationWash | AfterRipening | Done deriving (Eq, Show, Read)
 
 type Initial = State
 
@@ -31,7 +31,7 @@ transitions :: a -> State -> State
 
 temperature :: a -> State -> Float
 time :: a -> State -> Int
-run :: a -> State -> Bool
 silverAdded :: a -> State -> Float
 saltAdded :: a -> State -> Salt -> Float
+waterAdded :: a -> State -> Float
 chemicalsAdded :: a -> State -> [String]
