@@ -1,10 +1,10 @@
-name:                Emulsion
+name:                EmulsionGen
 version:             0.1.0.0
 github:              "githubuser/Emulsion"
-license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2019 Author name here"
+license:             Custom
+author:              "Alexander Elkholy"
+maintainer:          "alexanderelkholy@gmail.com"
+copyright:           "2019 Alexander Elkholy"
 
 extra-source-files:
 - README.md

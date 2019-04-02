@@ -2,44 +2,57 @@
     "name": "Steigman's Lith Example",
     "author": "Steigman",
     "source": "book-1954(insert mla)",
-    "first precipitation": [
-        {
-            "silver":20,
-            "water":100.0,
-            "poured":{
-                "order":1,
-                "into":2,
-                "time":0
+    "precipitation": {
+        "temperature": 60,
+        "time":60,
+        "solutions": [
+            {
+                "silver":20,
+                "water":100.0,
+                "poured":{
+                    "order":1,
+                    "into":2,
+                    "time":0
+                },
+                "temperature":55
             },
-            "temperature":55
-        },
-        {
-            "water":425.0,
-            "gelatin":20,
-            "acid":{
-                "name":"hcl",
-                "concentration":37,
-                "amount":2.0,
-                "unit":"ml"
+            {
+                "water":425.0,
+                "gelatin":20,
+                "acid":{
+                    "name":"hcl",
+                    "concentration":37,
+                    "amount":2.0,
+                    "unit":"ml"
+                },
+                "cdcl":0.4,
+                "albumen":{
+                    "concentration":0.10,
+                    "quantity":2
+                },
+                "temperature":55
             },
-            "cdcl":0.4,
-            "albumen":{
-                "concentration":0.10,
-                "quantity":2
-            },
-            "temperature":55
-        },
-        {
-            "water":40.0,
-            "cdcl":0.3,
-            "nacl":7,
-            "kbr":1.5,
-            "temperature":55,
-            "poured":{
-                "order":2,
-                "into":2,
-                "time":0
+            {
+                "water":40.0,
+                "cdcl":0.3,
+                "nacl":7,
+                "kbr":1.5,
+                "temperature":55,
+                "poured":{
+                    "order":2,
+                    "into":2,
+                    "time":0
+                }
             }
+        ],
+        "double-jet":null,
+        "second-precipitation": {
+            "temperature":null,
+            "solutions":[
+                {
+                    "silver":3.0
+                }
+            ]
         }
-    ]
+    }
 }
