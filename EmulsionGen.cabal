@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: fa774203b05a2361366d5bd4103379acd54a31cef8d172840722a28b164c8ed7
+-- hash: 9aa52ec44688f3d26a34ec429f288e88eacd98c2a8009543aac462d0dff1a6d0
 
 name:           EmulsionGen
 version:        0.1.0.0
@@ -14,7 +14,7 @@ bug-reports:    https://github.com/aelkholy/emulsions/issues
 author:         Alexander Elkholy
 maintainer:     alexanderelkholy@gmail.com
 copyright:      2019 Alexander Elkholy
-license:        Custom
+license:        OtherLicense
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
@@ -37,7 +37,7 @@ library
       base >=4.7 && <5
   default-language: Haskell2010
 
-executable EmulsionGen-exe
+executable EmulsionGen
   main-is: Main.hs
   other-modules:
       Paths_EmulsionGen
