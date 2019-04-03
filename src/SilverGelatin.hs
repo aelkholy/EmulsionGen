@@ -18,7 +18,7 @@ module SilverGelatin where
 
 type Temperature = Float
 
-data Quantity = Grams {amount :: Float} | Ml {amount :: Float} deriving (Eq, Show, Read)  -- quantity, quantity
+data Quantity = Grams {amount :: Float} | Ml {amount :: Float, concentration :: Float} deriving (Eq, Show, Read)  -- quantity, quantity / perc
 
 type Water = Quantity
 type KI = Quantity
