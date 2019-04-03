@@ -53,11 +53,11 @@ instance Chemical ChemicalModifier where
 
 -- Kripke Definitions --
 
-data State = Unmixed  | Precipitation | Wash | PrecipitationWash | AfterRipening | Done deriving (Eq, Show, Read)
+data State = NoReaction | Precipitation | Wash | PrecipitationWash | AfterRipening | Done deriving (Eq, Show, Read)
 
 type Initial = State
 
-data Transistion = Transition {time :: Float, transition :: State -> State}
+data Transistion = TRANSITION {time :: Float, transition :: State -> State}
 
-data Emulsion = Emulsion [State] State [Transistion] (State -> [Solution])
+data Emulsion = EMULSION [State] State [Transistion] (State -> [Solution])
 -- States, Initial State, Transitions, Labeling
