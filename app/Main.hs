@@ -12,5 +12,5 @@ main = do
       [] -> error "must supply file"
       [arg] -> do 
         handle <- openFile arg ReadMode
-        putStrLn "asdf"
+        FileLoader.parse handle
       _ -> error "too many arguments"

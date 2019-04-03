@@ -1,7 +1,9 @@
 module FileLoader ( 
     parse
     ) where
+
 import SilverGelatin
+import System.IO
         
-parse :: IO ()
-parse = putStrLn "someFunc"
+parse :: Handle -> String
+parse x = "someFunc"
