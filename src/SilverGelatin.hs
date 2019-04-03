@@ -16,6 +16,8 @@ module SilverGelatin where
 
 -- Emulsion
 
+type Temperature = Float
+
 data Quantity = Grams {amount :: Float} | Ml {amount :: Float} deriving (Eq, Show, Read)  -- quantity, quantity
 
 type Water = Quantity
@@ -44,20 +46,14 @@ molecularWeight (Modifier x) = modifierMW x
 molecularWeight (Silver x) = 169.87
 molecularWeight (Water x) = 18.01528
 
+-- solubility :: Salt -> Float
 
 -- Kripke
 data State = Gelatin  | Precipitation | Wash | PrecipitationWash | AfterRipening | Done deriving (Eq, Show, Read)
 
 type Initial = State
 
--- transitions :: State -> State
+data Transistion = Transition {time :: Float, transition :: State -> State}
 
--- temperature :: State -> Float
--- time :: State -> Int
--- silverAdded :: State -> Float
--- saltAdded :: State -> Salt
--- waterAdded :: State -> Float
--- chemicalsAdded :: State -> [String]
-
--- type Emulsion = [State] State [State -> State] 
--- States, Initial State, Transitions, Labeling
+data Emulsion = Emulsion [State] State [Transistion] (State -> [Chemical]) (State -> Temperature)
+-- States, Initial State, Transitions, Labeling, Labeling

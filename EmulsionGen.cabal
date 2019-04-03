@@ -1,0 +1,63 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.1.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: fa774203b05a2361366d5bd4103379acd54a31cef8d172840722a28b164c8ed7
+
+name:           EmulsionGen
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/Emulsion#readme>
+homepage:       https://github.com/aelkholy/emulsions#readme
+bug-reports:    https://github.com/aelkholy/emulsions/issues
+author:         Alexander Elkholy
+maintainer:     alexanderelkholy@gmail.com
+copyright:      2019 Alexander Elkholy
+license:        Custom
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/aelkholy/emulsions
+
+library
+  exposed-modules:
+      FileLoader
+      SilverGelatin
+  other-modules:
+      Paths_EmulsionGen
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+  default-language: Haskell2010
+
+executable EmulsionGen-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_EmulsionGen
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      EmulsionGen
+    , base >=4.7 && <5
+  default-language: Haskell2010
+
+test-suite EmulsionGen-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_EmulsionGen
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      EmulsionGen
+    , base >=4.7 && <5
+  default-language: Haskell2010

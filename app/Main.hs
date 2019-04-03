@@ -1,6 +1,6 @@
 module Main where
 
-import SilverGelatin
+import FileLoader
 -- FROM STACKAGE
 import System.Environment
 
@@ -11,3 +11,5 @@ main = do
       [] -> error "must supply a file to open"
       [arg] -> do handle <- openFile arg ReadMode
       _ -> error "too many arguments"
+    
+    
