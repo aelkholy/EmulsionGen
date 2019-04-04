@@ -22,20 +22,30 @@ data Unit = GRAM | MILLILITER
 data Quantity = QUANTITY {amount :: Double, unit :: Unit}
 type Temperature = Double
 
-data Salt = KI { sQuantity :: Quantity}
-  | KBr { sQuantity :: Quantity}
-  | NaCl { sQuantity :: Quantity}
+data Salt = KI { sQuantity :: Quantity }
+  | KBr { sQuantity :: Quantity }
+  | NaCl { sQuantity :: Quantity }
 data Silver = SILVER { vQuantity :: Quantity}
-data Acid = ACID { aQuantity :: Quantity}
-data ChemicalModifier = CHEMICALMODIFIER { mQuantity :: Quantity, mWeight :: Double}
+data ChemicalModifier = CHEMICALMODIFIER { name :: String, mQuantity :: Quantity, mWeight :: Double, conc :: Double}
+type Acid = ChemicalModifier
 
 data Solution = SOLUTION {
   salts :: [Salt],
-  ag :: [Silver],
-  acids :: [Acid],
+  ag :: Silver,
+  acids :: Acid,
   other :: [ChemicalModifier],
+  water :: Double,
   temp :: Temperature
 }
+
+data Rate = RATE { added :: Double, rTime :: Time } -- percent / over time minutes
+data Mixture = MIXTURE {
+  rate :: Rate,
+  receiving :: Solution,
+  giving :: Solution
+}
+-- mixture :: Solution -> Solution -> Solution
+-- mixture a b = zipList
 
 class Chemical a where
   molecularWeight :: a -> Double
@@ -49,15 +59,25 @@ instance Chemical Silver where
   molecularWeight (SILVER _)  = 169.87
 
 instance Chemical ChemicalModifier where
-  molecularWeight (CHEMICALMODIFIER _ m) = m
+  molecularWeight (CHEMICALMODIFIER _ _ m _) = m
 
 -- Kripke Definitions --
+type Time = Double
 
-data State = NoReaction | Precipitation | Wash | PrecipitationWash | AfterRipening | Done deriving (Eq, Show, Read)
+data Step = Unmixed | Precipitation | Wash | PrecipitationWash | AfterRipening | Done deriving (Eq, Show, Read)
+
+data State = STATE {
+  step :: Step,
+  solutions :: [Solution],
+  timeInState :: Time
+}
 
 type Initial = State
+data Transistion = TRANSITION {transition :: State -> State, mixed :: [Mixture] }
 
-data Transistion = TRANSITION {time :: Float, transition :: State -> State}
-
-data Emulsion = EMULSION [State] State [Transistion] (State -> [Solution])
--- States, Initial State, Transitions, Labeling
+data Emulsion = EMULSION { 
+  initialState :: State,
+  states :: [State],
+  transitions :: [Transistion]
+  }
+-- States, Initial State, Transitions
