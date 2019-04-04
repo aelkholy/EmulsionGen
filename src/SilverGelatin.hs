@@ -45,7 +45,7 @@ data Mixture = MIXTURE {
   giving :: Solution
 }
 -- mixture :: Solution -> Solution -> Solution
--- mixture a b = zipList
+-- mixture a b = 
 
 class Chemical a where
   molecularWeight :: a -> Double
@@ -67,17 +67,17 @@ type Time = Double
 data Step = Unmixed | Precipitation | Wash | PrecipitationWash | AfterRipening | Done deriving (Eq, Show, Read)
 
 data State = STATE {
-  step :: Step,
-  solutions :: [Solution],
-  timeInState :: Time
+  step :: Step, -- What step are we in.
+  solutions :: [Solution], -- What we've added to the pot.
+  timeInState :: Time -- How long before initiating the next transition.
 }
 
 type Initial = State
-data Transistion = TRANSITION {transition :: State -> State, mixed :: [Mixture] }
+data Transistion = TRANSITION {transition :: State -> State, additions :: [Mixture] }
 
 data Emulsion = EMULSION { 
-  initialState :: State,
-  states :: [State],
+  initialState :: State, -- Will contain at least one solution
+  states :: [State], -- Setting convention that it will _not_ include initial state.
   transitions :: [Transistion]
   }
 -- States, Initial State, Transitions

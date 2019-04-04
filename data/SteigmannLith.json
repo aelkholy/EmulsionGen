@@ -1,0 +1,351 @@
+{
+  "initialState": {
+    "order": 0,
+    "step": "Unmixed",
+    "solutions": [
+      {
+        "salts": [],
+        "ag": {},
+        "acids": [
+          {
+            "name": "HCl",
+            "mQuantity": {
+              "amount": 2.0,
+              "unit": "MILLILITERS"
+            },
+            "mWeight": 36.46,
+            "conc": 0.37
+          }
+        ],
+        "other": [
+          {
+            "name": "CdCl2*2H2O",
+            "mWeight": 219.351,
+            "mQuantity": {
+              "amount": 0.7,
+              "unit": "GRAM"
+            },
+            "conc": null
+          },
+          {
+            "name": "Albumen",
+            "mQuantity": {
+              "amount": 2.0,
+              "unit": "MILLILITERS"
+            },
+            "mWeight": null,
+            "conc": 0.1
+          }
+        ],
+        "water": 425,
+        "temp": 55.0
+      }
+    ],
+    "timeInState": 0.0
+  },
+  "states": [
+    {
+      "order": 1,
+      "step": "Unmixed",
+      "solutions": [
+        {
+          "salts": [],
+          "ag": {},
+          "acids": [
+            {
+              "name": "HCl",
+              "mQuantity": {
+                "amount": 2.0,
+                "unit": "MILLILITERS"
+              },
+              "mWeight": 36.46,
+              "conc": 0.37
+            }
+          ],
+          "other": [
+            {
+              "name": "CdCl2*2H2O",
+              "mWeight": 219.351,
+              "mQuantity": {
+                "amount": 0.7,
+                "unit": "GRAM"
+              },
+              "conc": null
+            },
+            {
+              "name": "Albumen",
+              "mQuantity": {
+                "amount": 2.0,
+                "unit": "MILLILITERS"
+              },
+              "mWeight": null,
+              "conc": 0.1
+            }
+          ],
+          "water": 425,
+          "temp": 55.0
+        },
+        {
+          "salts": [],
+          "ag": {
+            "vQuantity": {
+              "amount": 20.0,
+              "unit": "GRAM"
+            }
+          },
+          "acids": [],
+          "other": [],
+          "water": 100.0,
+          "temp": 55.0
+        }
+      ],
+      "timeInState":0.0
+    },
+    {
+      "order": 2,
+      "step": "Precipitation",
+      "solutions": [
+        {
+          "salts": [],
+          "ag": {},
+          "acids": [
+            {
+              "name": "HCl",
+              "mQuantity": {
+                "amount": 2.0,
+                "unit": "MILLILITERS"
+              },
+              "mWeight": 36.46,
+              "conc": 0.37
+            }
+          ],
+          "other": [
+            {
+              "name": "CdCl2*2H2O",
+              "mWeight": 219.351,
+              "mQuantity": {
+                "amount": 0.7,
+                "unit": "GRAM"
+              },
+              "conc": null
+            },
+            {
+              "name": "Albumen",
+              "mQuantity": {
+                "amount": 2.0,
+                "unit": "MILLILITERS"
+              },
+              "mWeight": null,
+              "conc": 0.1
+            }
+          ],
+          "water": 425,
+          "temp": 55.0
+        },
+        {
+          "salts": [],
+          "ag": {
+            "vQuantity": {
+              "amount": 20.0,
+              "unit": "GRAM"
+            }
+          },
+          "acids": [],
+          "other": [],
+          "water": 100.0,
+          "temp": 55.0
+        },
+        {
+          "salts": [
+            {
+              "KBr": {
+                "sQuantity": {
+                  "amount": 1.5,
+                  "unit": "GRAM"
+                }
+              }
+            },
+            {
+              "NaCl": {
+                "sQuantity": {
+                  "amount": 7.0,
+                  "unit": "GRAM"
+                }
+              }
+            }
+          
+          ],
+          "ag": {},
+          "acids": [],
+          "other": [
+            {
+              "name": "CdCl2*2H2O",
+              "mWeight": 219.351,
+              "mQuantity": {
+                "amount": 0.3,
+                "unit": "GRAM"
+              },
+              "conc": null
+            }
+          ],
+          "water": 40.0,
+          "temp": 55.0
+        }
+      ],
+      "timeInState":0.0
+    }
+  ],
+  "transitions": [
+    {
+      "transition": {
+        "fromState": 0,
+        "toState": 1
+      },
+      "additions": [
+        {
+          "rate": {
+            "added": 1,
+            "rTime": 0.0
+          },
+          "receiving": {
+            "salts": [],
+            "ag": {},
+            "acids": [
+              {
+                "name": "HCl",
+                "mQuantity": {
+                  "amount": 2.0,
+                  "unit": "MILLILITERS"
+                },
+                "mWeight": 36.46,
+                "conc": 0.37
+              }
+            ],
+            "other": [
+              {
+                "name": "CdCl2*2H2O",
+                "mWeight": 219.351,
+                "mQuantity": {
+                  "amount": 0.7,
+                  "unit": "GRAM"
+                },
+                "conc": null
+              },
+              {
+                "name": "Albumen",
+                "mQuantity": {
+                  "amount": 2.0,
+                  "unit": "MILLILITERS"
+                },
+                "mWeight": null,
+                "conc": 0.1
+              }
+            ],
+            "water": 425,
+            "temp": 55.0
+          },
+          "giving": {
+            "salts": [],
+            "ag": {
+              "vQuantity": {
+                "amount": 20.0,
+                "unit": "GRAM"
+              }
+            },
+            "acids": [],
+            "other": [],
+            "water": 100.0,
+            "temp": 55.0
+          }
+        }
+      ]
+    },
+    {
+      "transition": {
+        "fromState": 1,
+        "toState": 2
+      },
+      "additions": [
+        {
+          "rate": {
+            "added": 1,
+            "rTime": 0.0
+          },
+          "receiving": {
+            "salts": [],
+            "ag": {},
+            "acids": [
+              {
+                "name": "HCl",
+                "mQuantity": {
+                  "amount": 2.0,
+                  "unit": "MILLILITERS"
+                },
+                "mWeight": 36.46,
+                "conc": 0.37
+              }
+            ],
+            "other": [
+              {
+                "name": "CdCl2*2H2O",
+                "mWeight": 219.351,
+                "mQuantity": {
+                  "amount": 0.7,
+                  "unit": "GRAM"
+                },
+                "conc": null
+              },
+              {
+                "name": "Albumen",
+                "mQuantity": {
+                  "amount": 2.0,
+                  "unit": "MILLILITERS"
+                },
+                "mWeight": null,
+                "conc": 0.1
+              }
+            ],
+            "water": 425,
+            "temp": 55.0
+          },
+          "giving": {
+            "salts": [
+              {
+                "KBr": {
+                  "sQuantity": {
+                    "amount": 1.5,
+                    "unit": "GRAM"
+                  }
+                }
+              },
+              {
+                "NaCl": {
+                  "sQuantity": {
+                    "amount": 7.0,
+                    "unit": "GRAM"
+                  }
+                }
+              }
+            
+            ],
+            "ag": {},
+            "acids": [],
+            "other": [
+              {
+                "name": "CdCl2*2H2O",
+                "mWeight": 219.351,
+                "mQuantity": {
+                  "amount": 0.3,
+                  "unit": "GRAM"
+                },
+                "conc": null
+              }
+            ],
+            "water": 40.0,
+            "temp": 55.0
+          }
+        }
+      ]
+    }
+  ]
+}
