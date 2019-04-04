@@ -11,10 +11,10 @@
             "name": "HCl",
             "mQuantity": {
               "amount": 2.0,
-              "unit": "MILLILITERS"
+              "unit": "MILLILITERS",
+              "conc": 0.37
             },
-            "mWeight": 36.46,
-            "conc": 0.37
+            "mWeight": 36.46
           }
         ],
         "other": [
@@ -24,17 +24,15 @@
             "mQuantity": {
               "amount": 0.7,
               "unit": "GRAM"
-            },
-            "conc": null
+            }
           },
           {
             "name": "Albumen",
             "mQuantity": {
               "amount": 2.0,
-              "unit": "MILLILITERS"
-            },
-            "mWeight": null,
-            "conc": 0.1
+              "unit": "MILLILITERS",
+              "conc": 0.1
+            }
           }
         ],
         "water": 425,
@@ -56,10 +54,10 @@
               "name": "HCl",
               "mQuantity": {
                 "amount": 2.0,
-                "unit": "MILLILITERS"
+                "unit": "MILLILITERS",
+                "conc": 0.37
               },
-              "mWeight": 36.46,
-              "conc": 0.37
+              "mWeight": 36.46
             }
           ],
           "other": [
@@ -69,17 +67,15 @@
               "mQuantity": {
                 "amount": 0.7,
                 "unit": "GRAM"
-              },
-              "conc": null
+              }
             },
             {
               "name": "Albumen",
               "mQuantity": {
                 "amount": 2.0,
-                "unit": "MILLILITERS"
-              },
-              "mWeight": null,
-              "conc": 0.1
+                "unit": "MILLILITERS",
+                "conc": 0.1
+              }
             }
           ],
           "water": 425,
@@ -113,10 +109,10 @@
               "name": "HCl",
               "mQuantity": {
                 "amount": 2.0,
-                "unit": "MILLILITERS"
+                "unit": "MILLILITERS",
+                "conc": 0.37
               },
-              "mWeight": 36.46,
-              "conc": 0.37
+              "mWeight": 36.46
             }
           ],
           "other": [
@@ -126,17 +122,15 @@
               "mQuantity": {
                 "amount": 0.7,
                 "unit": "GRAM"
-              },
-              "conc": null
+              }
             },
             {
               "name": "Albumen",
               "mQuantity": {
                 "amount": 2.0,
-                "unit": "MILLILITERS"
-              },
-              "mWeight": null,
-              "conc": 0.1
+                "unit": "MILLILITERS",
+                "conc": 0.1
+              }
             }
           ],
           "water": 425,
@@ -184,8 +178,7 @@
               "mQuantity": {
                 "amount": 0.3,
                 "unit": "GRAM"
-              },
-              "conc": null
+              }
             }
           ],
           "water": 40.0,
@@ -193,6 +186,11 @@
         }
       ],
       "timeInState":0.0
+    },
+    {
+      "order": 2,
+      "step": "Precipitation",
+      "timeInState":60.0
     }
   ],
   "transitions": [
@@ -215,10 +213,10 @@
                 "name": "HCl",
                 "mQuantity": {
                   "amount": 2.0,
-                  "unit": "MILLILITERS"
+                  "unit": "MILLILITERS",
+                  "conc": 0.37
                 },
-                "mWeight": 36.46,
-                "conc": 0.37
+                "mWeight": 36.46
               }
             ],
             "other": [
@@ -228,17 +226,15 @@
                 "mQuantity": {
                   "amount": 0.7,
                   "unit": "GRAM"
-                },
-                "conc": null
+                }
               },
               {
                 "name": "Albumen",
                 "mQuantity": {
                   "amount": 2.0,
-                  "unit": "MILLILITERS"
-                },
-                "mWeight": null,
-                "conc": 0.1
+                  "unit": "MILLILITERS",
+                  "conc": 0.1
+                }
               }
             ],
             "water": 425,
@@ -279,10 +275,10 @@
                 "name": "HCl",
                 "mQuantity": {
                   "amount": 2.0,
-                  "unit": "MILLILITERS"
+                  "unit": "MILLILITERS",
+                  "conc": 0.37
                 },
-                "mWeight": 36.46,
-                "conc": 0.37
+                "mWeight": 36.46
               }
             ],
             "other": [
@@ -292,17 +288,15 @@
                 "mQuantity": {
                   "amount": 0.7,
                   "unit": "GRAM"
-                },
-                "conc": null
+                }
               },
               {
                 "name": "Albumen",
                 "mQuantity": {
                   "amount": 2.0,
-                  "unit": "MILLILITERS"
-                },
-                "mWeight": null,
-                "conc": 0.1
+                  "unit": "MILLILITERS",
+                  "conc": 0.1
+                }
               }
             ],
             "water": 425,
@@ -337,8 +331,7 @@
                 "mQuantity": {
                   "amount": 0.3,
                   "unit": "GRAM"
-                },
-                "conc": null
+                }
               }
             ],
             "water": 40.0,
@@ -346,6 +339,37 @@
           }
         }
       ]
+    },
+    {
+      "transition":{
+        "fromState": 2,
+        "toState": 3
+      },
+      "additions":[
+        {
+          "receiving": {},
+          "giving": {
+            "salts": [
+              {
+                "KI": {
+                  "sQuantity": {
+                    "amount": 12,
+                    "unit": "MILLILITER",
+                    "conc": 0.002
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "transition":{
+        "fromState": 3,
+        "toState": 4
+      },
+      "additions":[]
     }
   ]
 }

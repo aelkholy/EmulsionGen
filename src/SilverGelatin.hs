@@ -19,14 +19,14 @@ module SilverGelatin where
 -- Emulsion Definitions --
 
 data Unit = GRAM | MILLILITER
-data Quantity = QUANTITY {amount :: Double, unit :: Unit}
+data Quantity = QUANTITY {amount :: Double, unit :: Unit, conc :: Double }
 type Temperature = Double
 
 data Salt = KI { sQuantity :: Quantity }
   | KBr { sQuantity :: Quantity }
   | NaCl { sQuantity :: Quantity }
 data Silver = SILVER { vQuantity :: Quantity}
-data ChemicalModifier = CHEMICALMODIFIER { name :: String, mQuantity :: Quantity, mWeight :: Double, conc :: Double}
+data ChemicalModifier = CHEMICALMODIFIER { name :: String, mQuantity :: Quantity, mWeight :: Double}
 type Acid = ChemicalModifier
 
 data Solution = SOLUTION {
@@ -41,7 +41,7 @@ data Solution = SOLUTION {
 data Rate = RATE { added :: Double, rTime :: Time } -- percent / over time minutes
 data Mixture = MIXTURE {
   rate :: Rate,
-  receiving :: Solution,
+  receiving :: Solution, -- In order to save me typing, if left empty the assumption will be the reacting vessel, i.e. the soln. specified in initial state, which is true 99% of the time.
   giving :: Solution
 }
 -- mixture :: Solution -> Solution -> Solution
@@ -68,11 +68,11 @@ data Step = Unmixed | Precipitation | Wash | PrecipitationWash | AfterRipening |
 
 data State = STATE {
   step :: Step, -- What step are we in.
-  solutions :: [Solution], -- What we've added to the pot.
+  solutions :: [Solution], -- What we've added to the pot. In practice you will only have to specify the transitions and the initial?
   timeInState :: Time -- How long before initiating the next transition.
 }
 
-type Initial = State
+type Initial = State -- Setting convention that the `solutions` attribute in this will be the reacting vessel
 data Transistion = TRANSITION {transition :: State -> State, additions :: [Mixture] }
 
 data Emulsion = EMULSION { 
