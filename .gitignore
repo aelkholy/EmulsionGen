@@ -1,5 +1,5 @@
 .stack-work/
-Emulsion.cabal
+EmulsionGen.cabal
 *~
 dist
 dist-*

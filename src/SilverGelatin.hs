@@ -1,4 +1,12 @@
-module SilverGelatin where
+{-# LANGUAGE DeriveGeneric #-}
+module SilverGelatin ( 
+  Emulsion, Transition,
+  Solution, Rate, Temperature,
+  ChemicalModifier, Salt,
+  Quantity, Silver, Unit
+  ) where
+import GHC.Generics
+
 -- http://www.tcs.hut.fi/Studies/T-79.186/2004/lecture3.pdf
 -- Let AP be a non-empty set of atomic propositions A Kripke structure is a tuple M = (S,s^0,R,L), Where
 --  S is a finite set of states
@@ -16,68 +24,47 @@ module SilverGelatin where
 
 ------------------
 
+
 -- Emulsion Definitions --
 
-data Unit = GRAM | MILLILITER
-data Quantity = QUANTITY {amount :: Double, unit :: Unit, conc :: Double }
+type Time = Double
 type Temperature = Double
-
+data Unit = GRAM | MILLILITER  deriving (Generic, Show)
+data Quantity = QUANTITY {amount :: Double, unit :: Unit, conc :: Maybe Double } deriving (Generic, Show) -- conc is %
 data Salt = KI { sQuantity :: Quantity }
   | KBr { sQuantity :: Quantity }
-  | NaCl { sQuantity :: Quantity }
-data Silver = SILVER { vQuantity :: Quantity}
-data ChemicalModifier = CHEMICALMODIFIER { name :: String, mQuantity :: Quantity, mWeight :: Double}
+  | NaCl { sQuantity :: Quantity } deriving (Generic, Show)
+data Silver = SILVER { vQuantity :: Quantity} deriving (Generic, Show)
+data ChemicalModifier = CHEMICALMODIFIER { name :: String, mQuantity :: Quantity, mWeight :: Maybe Double} deriving (Generic, Show)
 type Acid = ChemicalModifier
 
 data Solution = SOLUTION {
-  salts :: [Salt],
-  ag :: Silver,
-  acids :: Acid,
-  other :: [ChemicalModifier],
-  water :: Double,
-  temp :: Temperature
-}
+  salts :: Maybe [Salt],
+  ag :: Maybe Silver,
+  acid :: Maybe Acid,
+  other :: Maybe [ChemicalModifier],
+  water :: Maybe Double,
+  temp :: Maybe Temperature
+} deriving (Generic, Show)
 
-data Rate = RATE { added :: Double, rTime :: Time } -- percent / over time minutes
-data Mixture = MIXTURE {
-  rate :: Rate,
-  receiving :: Solution, -- In order to save me typing, if left empty the assumption will be the reacting vessel, i.e. the soln. specified in initial state, which is true 99% of the time.
-  giving :: Solution
-}
--- mixture :: Solution -> Solution -> Solution
--- mixture a b = 
+data Rate = RATE { amountAdded :: Double, overTime :: Time } deriving (Generic, Show) -- percent / over time minutes
+data Transition = TRANSITION { addition :: Solution, rate :: Maybe Rate, waitTimeAfter :: Time} deriving (Generic, Show)
+
+data Emulsion = EMULSION {
+  initialSolution :: Solution,
+  transitions :: [Transition]
+} deriving (Generic, Show)
 
 class Chemical a where
-  molecularWeight :: a -> Double
+  molecularWeight :: a -> Maybe Double
 
 instance Chemical Salt where
-  molecularWeight (KI _) = 166.0028
-  molecularWeight (KBr _) = 119.002
-  molecularWeight (NaCl _) = 58.44
+  molecularWeight (KI _) = Just 166.0028
+  molecularWeight (KBr _) = Just 119.002
+  molecularWeight (NaCl _) = Just 58.44
 
 instance Chemical Silver where
-  molecularWeight (SILVER _)  = 169.87
+  molecularWeight (SILVER _)  = Just 169.87
 
 instance Chemical ChemicalModifier where
-  molecularWeight (CHEMICALMODIFIER _ _ m _) = m
-
--- Kripke Definitions --
-type Time = Double
-
-data Step = Unmixed | Precipitation | Wash | PrecipitationWash | AfterRipening | Done deriving (Eq, Show, Read)
-
-data State = STATE {
-  step :: Step, -- What step are we in.
-  solutions :: [Solution], -- What we've added to the pot. In practice you will only have to specify the transitions and the initial?
-  timeInState :: Time -- How long before initiating the next transition.
-}
-
-type Initial = State -- Setting convention that the `solutions` attribute in this will be the reacting vessel
-data Transistion = TRANSITION {transition :: State -> State, additions :: [Mixture] }
-
-data Emulsion = EMULSION { 
-  initialState :: State, -- Will contain at least one solution
-  states :: [State], -- Setting convention that it will _not_ include initial state.
-  transitions :: [Transistion]
-  }
--- States, Initial State, Transitions
+  molecularWeight (CHEMICALMODIFIER _ _ m) = m
