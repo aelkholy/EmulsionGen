@@ -1,8 +1,21 @@
 module FileLoader ( 
+    decoder,
     getJSON
     ) where
 
 import SilverGelatin
+-- FROM STACKAGE
+import System.Environment
+import System.IO  
+import Control.Monad
+import Data.Aeson
+
+import SilverGelatin
+import Ingredients.Basics (Quantity, Time, Temperature, Rate, Unit)
+import Ingredients.Silver (Silver)
+import Ingredients.Salt (Salt)
+import Ingredients.ChemicalModifier (ChemicalModifier)
+
 import qualified Data.ByteString.Lazy as B
 import Data.Aeson 
 -- exports the following:
@@ -12,49 +25,35 @@ import Data.Aeson
 import Data.Aeson
 import Data.Aeson.Types                          ( Parser )
 
+instance FromJSON Unit
+instance ToJSON Unit
+
+instance FromJSON Quantity
+instance ToJSON Quantity
+
+instance FromJSON Silver
+instance ToJSON Silver
+
+instance FromJSON ChemicalModifier
+instance ToJSON ChemicalModifier
+
+instance FromJSON Salt
+instance ToJSON Salt
+
+instance FromJSON Solution
+instance ToJSON Solution
+
+instance FromJSON Rate
+instance ToJSON Rate
+
+instance FromJSON Transition
+instance ToJSON Transition
+
+instance FromJSON Emulsion
+instance ToJSON Emulsion
 
 getJSON :: FilePath -> IO B.ByteString
 getJSON path = B.readFile path
 
-instance FromJSON SilverGelatin.Unit
-instance ToJSON SilverGelatin.Unit
-
-instance FromJSON SilverGelatin.Quantity
-instance ToJSON SilverGelatin.Quantity
-
-instance FromJSON SilverGelatin.Silver
-instance ToJSON SilverGelatin.Silver
-
-instance FromJSON SilverGelatin.ChemicalModifier
-instance ToJSON SilverGelatin.ChemicalModifier
-
-instance FromJSON SilverGelatin.Salt
-instance ToJSON SilverGelatin.Salt
-
-instance FromJSON SilverGelatin.Solution
-    -- parseJSON = withObject "solution" $ \o -> do
-    --     salts .? "salts"
-    --     ag    .? "ag"
-    --     acids .? "acids"
-    --     other .? "other"
-    --     water .? "water"
-    --     temp  .? "temp"
-    --     return SilverGelatin.Solution{..}
-
-instance ToJSON SilverGelatin.Solution
-
-instance FromJSON SilverGelatin.Rate
-instance ToJSON SilverGelatin.Rate
-
-instance FromJSON SilverGelatin.Transition
-instance ToJSON SilverGelatin.Transition
-
-instance FromJSON SilverGelatin.Emulsion
-instance ToJSON SilverGelatin.Emulsion
-
---   salts :: [Salt],
---   ag :: Silver,
---   acids :: Acid,
---   other :: [ChemicalModifier],
---   water :: Double,
---   temp :: Temperature
+decoder :: IO B.ByteString -> IO (Either String SilverGelatin.Emulsion)
+decoder arg = (eitherDecode <$> arg)

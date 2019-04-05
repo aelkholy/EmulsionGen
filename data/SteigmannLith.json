@@ -4,7 +4,7 @@
     "ag": null,
     "acid": {
         "name": "HCl",
-        "mQuantity": {
+        "quantity": {
           "amount": 2.0,
           "unit": "MILLILITER",
           "conc": 0.37
@@ -15,7 +15,7 @@
       {
         "name": "CdCl2*2H2O",
         "mWeight": 219.351,
-        "mQuantity": {
+        "quantity": {
           "amount": 0.7,
           "unit": "GRAM",
           "conc": null
@@ -23,8 +23,8 @@
       },
       {
         "name": "Albumen",
-        "mWeight": null,
-        "mQuantity": {
+        "weight": null,
+        "quantity": {
           "amount": 2.0,
           "unit": "MILLILITER",
           "conc": 0.1
@@ -39,7 +39,7 @@
       "addition":{
         "salts": null,
         "ag": {
-          "vQuantity": {
+          "quantity": {
             "amount": 20.0,
             "unit": "GRAM",
             "conc": null
@@ -61,7 +61,7 @@
         "salts": [
           {
             "tag": "KBr",
-            "sQuantity": {
+            "quantity": {
               "amount": 1.5,
               "unit": "GRAM",
               "conc": null
@@ -69,7 +69,7 @@
           },
           {
             "tag": "NaCl",
-            "sQuantity": {
+            "quantity": {
               "amount": 7,
               "unit": "GRAM",
               "conc": null
@@ -81,8 +81,8 @@
         "other": [
           {
             "name": "CdCl2*2H2O",
-            "mWeight": 219.351,
-            "mQuantity": {
+            "weight": 219.351,
+            "quantity": {
               "amount": 0.7,
               "unit": "GRAM",
               "conc": null
@@ -103,7 +103,7 @@
         "salts": [
           {
             "tag": "KI",
-            "sQuantity": {
+            "quantity": {
               "amount": 12,
               "unit": "MILLILITER",
               "conc": 0.002

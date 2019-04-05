@@ -1,11 +1,16 @@
 {-# LANGUAGE DeriveGeneric #-}
 module SilverGelatin ( 
   Emulsion, Transition,
-  Solution, Rate, Temperature,
-  ChemicalModifier, Salt,
-  Quantity, Silver, Unit
+  Solution
   ) where
+
 import GHC.Generics
+import Control.Monad
+
+import Ingredients.Basics (Quantity, Time, Temperature, Rate)
+import Ingredients.Silver (Silver)
+import Ingredients.Salt (Salt(..))
+import Ingredients.ChemicalModifier (ChemicalModifier)
 
 -- http://www.tcs.hut.fi/Studies/T-79.186/2004/lecture3.pdf
 -- Let AP be a non-empty set of atomic propositions A Kripke structure is a tuple M = (S,s^0,R,L), Where
@@ -22,20 +27,8 @@ import GHC.Generics
 -- transitions are mixing things
 -- labelling function is the properties (propositions) at each state. Temperature, reactant quantities, etc.
 
-------------------
-
-
 -- Emulsion Definitions --
 
-type Time = Double
-type Temperature = Double
-data Unit = GRAM | MILLILITER  deriving (Generic, Show)
-data Quantity = QUANTITY {amount :: Double, unit :: Unit, conc :: Maybe Double } deriving (Generic, Show) -- conc is %
-data Salt = KI { sQuantity :: Quantity }
-  | KBr { sQuantity :: Quantity }
-  | NaCl { sQuantity :: Quantity } deriving (Generic, Show)
-data Silver = SILVER { vQuantity :: Quantity} deriving (Generic, Show)
-data ChemicalModifier = CHEMICALMODIFIER { name :: String, mQuantity :: Quantity, mWeight :: Maybe Double} deriving (Generic, Show)
 type Acid = ChemicalModifier
 
 data Solution = SOLUTION {
@@ -47,24 +40,9 @@ data Solution = SOLUTION {
   temp :: Maybe Temperature
 } deriving (Generic, Show)
 
-data Rate = RATE { amountAdded :: Double, overTime :: Time } deriving (Generic, Show) -- percent / over time minutes
 data Transition = TRANSITION { addition :: Solution, rate :: Maybe Rate, waitTimeAfter :: Time} deriving (Generic, Show)
 
 data Emulsion = EMULSION {
   initialSolution :: Solution,
   transitions :: [Transition]
 } deriving (Generic, Show)
-
-class Chemical a where
-  molecularWeight :: a -> Maybe Double
-
-instance Chemical Salt where
-  molecularWeight (KI _) = Just 166.0028
-  molecularWeight (KBr _) = Just 119.002
-  molecularWeight (NaCl _) = Just 58.44
-
-instance Chemical Silver where
-  molecularWeight (SILVER _)  = Just 169.87
-
-instance Chemical ChemicalModifier where
-  molecularWeight (CHEMICALMODIFIER _ _ m) = m
