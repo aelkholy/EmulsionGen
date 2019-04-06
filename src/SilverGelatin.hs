@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 module SilverGelatin ( 
-  Emulsion, Transition,
-  Solution
+  Emulsion(..), Transition,
+  Solution(..)
   ) where
 
 import GHC.Generics

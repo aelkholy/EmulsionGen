@@ -2,7 +2,7 @@ module Analysis (
   analyze
   ) where
 
-import SilverGelatin
+import SilverGelatin (Solution(..), Emulsion(..))
 
 analyze :: Either String Emulsion -> Either String String
 analyze e = Right "asdf"
@@ -16,8 +16,8 @@ maybeMerge maybeA maybeB =
      b <- maybeB   -- if B is something, get it; otherwise, pass through Nothing
      Just (merge a b)  -- both inputs succeeded!  do the operation, and return the result
 
-accumulate :: Solution -> Solution -> Solution
-accumulate s1 s2 = Solution maybeMerge s1.salts s2.salts, Nothing, Nothing, Nothing, Nothing, Nothing
+accumulate :: SilverGelatin.Solution -> SilverGelatin.Solution -> SilverGelatin.Solution
+accumulate s1 s2 = SilverGelatin.SOLUTION((maybeMerge s1.salts s2.salts), Nothing, Nothing, Nothing, Nothing, Nothing)
 
 
 -- accumulateSolutions :: Emulsion -> Solution
