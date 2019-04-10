@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 module SilverGelatin ( 
   Emulsion(..), Transition,
-  Solution(..), reactAGX
+  Solution(..), reactAGX, leftoverAGNO
   ) where
 
 import GHC.Generics
@@ -37,7 +37,7 @@ data Solution = SOLUTION {
   salts :: [Salt],
   agnox :: SilverNitrate,
   agH :: [SilverHalide],
-  ph :: Maybe Ph,
+  --ph :: Maybe Ph,
   other :: [ChemicalModifier],
   water :: Double,
   temp :: Temperature
@@ -45,29 +45,32 @@ data Solution = SOLUTION {
 
 data Transition = TRANSITION { addition :: Solution, rate :: Maybe Rate, waitTimeAfter :: Time} deriving (Generic, Show)
 
--- data Emulsion = EMULSION {
---   initialSolution :: Solution,
---   transitions :: [Transition]
--- } deriving (Generic, Show)
+data Emulsion = EMULSION {
+  initialSolution :: Solution,
+  transitions :: [Transition]
+} deriving (Generic, Show)
 
-data Emulsion = Solution | MIXTURES { transitions :: [Transition] } deriving (Generic, Show)
-
--- Focus
-type EmulsionZipper a = ([a],[a])
-
-goForward :: EmulsionZipper a -> EmulsionZipper a  
-goForward (x:xs, bs) = (xs, x:bs)  
-  
-goBack :: EmulsionZipper a -> EmulsionZipper a
-goBack (xs, b:bs) = (b:xs, bs)  
+-- data Emulsion = Solution | MIXTURES { transitions :: [Transition] } deriving (Generic, Show)
 
 -- Fold --
 
 -- Combining functions
 -- mix :: Solution -> Solution -> Solution
--- mix one two = 
+-- mix one two = SOLUTION {
 
+-- }
 
+reactionDifference :: SilverNitrate -> Salt -> Double -- moles nitrate leftover
+reactionDifference (SILVERNITRATE nitrate) salt = nitrateMoles - saltMoles
+                                                where nitrateMW = molecularWeight (SILVERNITRATE nitrate)
+                                                      saltMW = molecularWeight salt
+                                                      nitrateMoles = nitrate / nitrateMW
+                                                      saltMoles = (Ingredients.Salt.amount salt) / saltMW
+
+leftoverAGNO :: SilverNitrate -> [Salt] -> SilverNitrate -- react all nitrate
+leftoverAGNO (SILVERNITRATE 0) _ = SILVERNITRATE {Ingredients.SilverNitrate.amount=0}
+leftoverAGNO s [] = s
+leftoverAGNO nitrate (x:xs) = leftoverAGNO SILVERNITRATE { Ingredients.SilverNitrate.amount = max (reactionDifference nitrate x) 0.0 } xs
 
 reactAGX :: [SilverHalide] -> SilverNitrate -> [Salt] -> [SilverHalide]
 reactAGX sh sn (x:xs) = case x of 

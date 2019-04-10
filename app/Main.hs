@@ -15,8 +15,8 @@ main = do
       [] -> error "must supply file"
       [filePath] -> do 
             loaded <- FileLoader.decoder (FileLoader.getJSON filePath)
-            let d = Analysis.analyze loaded
-            case d of
+            -- let d = Analysis.analyze loaded
+            case loaded of
                 Left err -> System.IO.putStrLn err
                 Right ps -> print ps
       _ -> error "too many arguments"
