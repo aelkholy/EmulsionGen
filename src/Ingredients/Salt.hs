@@ -1,11 +1,11 @@
 {-# LANGUAGE DeriveGeneric #-}
 module Ingredients.Salt (
-  Salt
+  Salt(..)
 ) where
 
 import GHC.Generics
 
-import Ingredients.Basics (Quantity, Chemical(..))
+import Ingredients.Basics (Quantity(..), Chemical(..), Unit(..), mixQuantities)
 
 data Salt = KI { quantity :: Quantity }
   | KBr { quantity :: Quantity }
@@ -15,3 +15,6 @@ instance Chemical Salt where
   molecularWeight (KI _) = Just 166.0028
   molecularWeight (KBr _) = Just 119.002
   molecularWeight (NaCl _) = Just 58.44
+
+mixSalts :: [Salt] -> [Salt] -> [Quantity]
+mixSalts one two = [ mixQuantities (quantity x) (quantity y) | x <- one, y <- two]

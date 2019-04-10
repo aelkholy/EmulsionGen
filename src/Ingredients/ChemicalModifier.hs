@@ -5,7 +5,7 @@ module Ingredients.ChemicalModifier (
 
 import GHC.Generics
 
-import Ingredients.Basics (Quantity, Chemical(..))
+import Ingredients.Basics (Quantity(..), Chemical(..), Unit(..))
 
 data ChemicalModifier = CHEMICALMODIFIER { name :: String, quantity :: Quantity, weight :: Maybe Double} deriving (Generic, Show)
 

@@ -3,26 +3,23 @@ module Analysis (
   ) where
 
 import SilverGelatin (Solution(..), Emulsion(..))
+import Ingredients.Basics (Quantity(..), Chemical(..), Unit(..))
 
-analyze :: Either String Emulsion -> Either String String
-analyze e = Right "asdf"
+data SilverHalide = SilverIodide {quantity :: Quantity} | SilverBromide {quantity :: Quantity} | SilverChloride {quantity :: Quantity}
 
--- getHalidePercent :: Emulsion -> (Double, Double, Double)
--- getHalidePercent e =
+-- instance Chemical SilverHalide where
+--   molecularWeight (SilverIodide _) = 60
+--   molecularWeight (SilverBromide _) = 50
+--   molecularWeight (SilverChloride _) = 40
+  
+-- solutionAccum :: Emulsion -> Solution
+-- finalHalides emulsion = foldl (emulsion.initialSolution) (emulsion.transitions)
 
-maybeMerge :: Maybe [a] -> Maybe [a] -> Maybe [a]
-maybeMerge maybeA maybeB =
-  do a <- maybeA   -- if A is something, get it; otherwise, pass through Nothing
-     b <- maybeB   -- if B is something, get it; otherwise, pass through Nothing
-     Just (merge a b)  -- both inputs succeeded!  do the operation, and return the result
+-- finalHalides :: Solution -> [SilverHalide]
+-- finalHalides s = do
+--   silver <- s.ag
+--   iSalts <- s.salts
+--   let salts = sort iSalts
 
-accumulate :: SilverGelatin.Solution -> SilverGelatin.Solution -> SilverGelatin.Solution
-accumulate s1 s2 = SilverGelatin.SOLUTION((maybeMerge s1.salts s2.salts), Nothing, Nothing, Nothing, Nothing, Nothing)
-
-
--- accumulateSolutions :: Emulsion -> Solution
--- accumulateSolutions (EMULSION is t) = is t
-
--- data Analysis
-
--- prettyAnalysis :: Analysis -> String
+analyze :: Either String SilverGelatin.Emulsion -> Either String String
+analyze x = Right "Hi"

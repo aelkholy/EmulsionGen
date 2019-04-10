@@ -2,7 +2,7 @@
   "initialSolution": {
     "salts": null,
     "ag": null,
-    "acid": {
+    "ph": {
         "name": "HCl",
         "quantity": {
           "amount": 2.0,
@@ -45,7 +45,7 @@
             "conc": null
           }
         },
-        "acid": null,
+        "ph": null,
         "other": null,
         "water": 100.0,
         "temp": 55.0
@@ -77,7 +77,7 @@
           }
         ],
         "ag": null,
-        "acid": null,
+        "ph": null,
         "other": [
           {
             "name": "CdCl2*2H2O",
@@ -111,7 +111,7 @@
           }
         ],
         "ag": null,
-        "acid": null,
+        "ph": null,
         "other": null,
         "water": 0,
         "temp": null
@@ -126,7 +126,7 @@
       "addition":{
         "salts": null,
         "ag": null,
-        "acid": null,
+        "ph": null,
         "other": null,
         "water": 0,
         "temp": 60.0

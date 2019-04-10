@@ -5,10 +5,11 @@ module SilverGelatin (
   ) where
 
 import GHC.Generics
-import Control.Monad
+import Control.Monad.State
+import qualified Data.Foldable as F
 
 import Ingredients.Basics (Quantity, Time, Temperature, Rate)
-import Ingredients.Silver (Silver)
+import Ingredients.Silver (Silver, defaultSilver)
 import Ingredients.Salt (Salt(..))
 import Ingredients.ChemicalModifier (ChemicalModifier)
 
@@ -29,20 +30,36 @@ import Ingredients.ChemicalModifier (ChemicalModifier)
 
 -- Emulsion Definitions --
 
-type Acid = ChemicalModifier
+type Ph = ChemicalModifier
 
 data Solution = SOLUTION {
-  salts :: Maybe [Salt],
-  ag :: Maybe Silver,
-  acid :: Maybe Acid,
-  other :: Maybe [ChemicalModifier],
-  water :: Maybe Double,
-  temp :: Maybe Temperature
+  salts :: [Salt],
+  ag :: Silver,
+  ph :: Maybe Ph,
+  other :: [ChemicalModifier],
+  water :: Double,
+  temp :: Temperature
 } deriving (Generic, Show)
 
 data Transition = TRANSITION { addition :: Solution, rate :: Maybe Rate, waitTimeAfter :: Time} deriving (Generic, Show)
 
-data Emulsion = EMULSION {
-  initialSolution :: Solution,
-  transitions :: [Transition]
-} deriving (Generic, Show)
+-- data Emulsion = EMULSION {
+--   initialSolution :: Solution,
+--   transitions :: [Transition]
+-- } deriving (Generic, Show)
+
+data Emulsion = Solution | MIXTURES { transitions :: [Transition] } deriving (Generic, Show)
+
+-- Focus
+type EmulsionZipper a = ([a],[a])
+
+goForward :: EmulsionZipper a -> EmulsionZipper a  
+goForward (x:xs, bs) = (xs, x:bs)  
+  
+goBack :: EmulsionZipper a -> EmulsionZipper a
+goBack (xs, b:bs) = (b:xs, bs)  
+
+-- Fold
+
+-- mix :: Solution -> Solution -> Solution
+-- mix one two = 
