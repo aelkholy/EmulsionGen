@@ -12,7 +12,8 @@ import Data.Aeson
 
 import SilverGelatin
 import Ingredients.Basics (Quantity, Time, Temperature, Rate, Unit)
-import Ingredients.Silver (Silver)
+import Ingredients.SilverNitrate (SilverNitrate)
+import Ingredients.SilverHalide (SilverHalide)
 import Ingredients.Salt (Salt)
 import Ingredients.ChemicalModifier (ChemicalModifier)
 
@@ -31,8 +32,11 @@ instance ToJSON Unit
 instance FromJSON Quantity
 instance ToJSON Quantity
 
-instance FromJSON Silver
-instance ToJSON Silver
+instance FromJSON SilverHalide
+instance ToJSON SilverHalide
+
+instance FromJSON SilverNitrate
+instance ToJSON SilverNitrate
 
 instance FromJSON ChemicalModifier
 instance ToJSON ChemicalModifier
