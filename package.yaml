@@ -49,3 +49,7 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - EmulsionGen
+    - tasty
+    - tasty-smallcheck
+    - tasty-quickcheck
+    - tasty-hunit
