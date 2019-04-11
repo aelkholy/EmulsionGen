@@ -1,5 +1,5 @@
-{
-    "Solution": {
+[
+    {
         "salts": [],
         "agnox": {
             "amount": 0.0
@@ -7,37 +7,86 @@
         "agH": [],
         "ph": {
             "name": "HCl",
-            "quantity": {
-              "amount": 2.0,
-              "unit": "MILLILITER",
-              "conc": 0.37
-            }
+            "amount": 2.0,
+            "unit": "MILLILITER",
+            "conc": 0.37
           },
         "other": [
             {
               "name": "CdCl2*2H2O",
-              "quantity": {
-                "amount": 0.7,
-                "unit": "GRAM",
-                "conc": null
-              }
+              "amount": 0.7,
+              "unit": "GRAM",
+              "conc": null
             },
             {
               "name": "Albumen",
-              "quantity": {
-                "amount": 2.0,
-                "unit": "MILLILITER",
-                "conc": 0.1
-              }
+              "amount": 2.0,
+              "unit": "MILLILITER",
+              "conc": 0.1
             }
           ],
         "water": 425.0,
         "temp": 55.0,
         "resting": 0.0
     },
-    "Steps": [
-        {
-            "tag": "STOP"
+    [
+      {
+        "tag": "ADDITION",
+        "rate":{
+          "amountAdded": 1.0,
+          "overTime": 0.0
+        },
+        "solution": {
+          "salts": [],
+          "agnox": {
+              "amount": 20.0
+          },
+          "agH": [],
+          "ph": null,
+          "other": [],
+          "water": 100.0,
+          "temp": 55.0,
+          "resting": 0.0
         }
+      },
+      {
+        "tag": "ADDITION",
+        "rate":{
+          "amountAdded": 1.0,
+          "overTime": 0.0
+        },
+        "solution": {
+          "salts": [
+            {
+              "tag": "KBr",
+              "amount": 1.5
+            },
+            {
+              "tag": "NaCl",
+              "amount": 7
+            }
+          ],
+          "agnox": {
+              "amount": 0.0
+          },
+          "agH": [],
+          "ph": null,
+          "other": [
+            {
+              "name": "CdCl2*2H2O",
+              "weight": 219.351,
+              "amount": 0.7,
+              "unit": "GRAM",
+              "conc": null
+            }
+          ],
+          "water": 40.0,
+          "temp": 55.0,
+          "resting": 0.0
+        }
+      },
+      {
+          "tag": "STOP"
+      }
     ]
-}
+]

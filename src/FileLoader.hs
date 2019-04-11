@@ -1,13 +1,14 @@
 module FileLoader (
+    decoder
     ) where
 
 -- Home team
 import SilverGelatin
-import Ingredients.Basics                   (Quantity, Time, Temperature, Rate, Unit)
+import Ingredients.Basics                   (Time, Temperature, Rate, Unit)
 import Ingredients.SilverNitrate            (SilverNitrate)
 import Ingredients.SilverHalide             (SilverHalide)
 import Ingredients.Salt                     (Salt)
-import Ingredients.ChemicalModifier         (ChemicalModifier)
+import Ingredients.ChemicalModifier          (ChemicalModifier)
 -- FROM STACKAGE
 import Data.Aeson                           ( FromJSON, ToJSON, eitherDecode )
 import Data.Aeson.Types                     ( Parser )
@@ -22,9 +23,6 @@ import qualified Data.ByteString.Lazy as B
 
 instance FromJSON Unit
 instance ToJSON Unit
-
-instance FromJSON Quantity
-instance ToJSON Quantity
 
 instance FromJSON SilverHalide
 instance ToJSON SilverHalide
@@ -47,5 +45,8 @@ instance ToJSON Rate
 instance FromJSON Step
 instance ToJSON Step
 
-decoder :: B.ByteString -> Either String (Solution, [Step])
-decoder arg = eitherDecode <$> arg
+decoder :: B.ByteString -> Either String Solution
+decoder arg = do
+        raw <- inputs
+        Right $ foldEmulsion (reducer) (fst raw) (snd raw)
+        where inputs = eitherDecode arg :: Either String (Solution, [Step])

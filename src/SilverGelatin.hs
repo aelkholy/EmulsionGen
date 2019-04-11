@@ -1,7 +1,8 @@
 {-# LANGUAGE DeriveGeneric #-}
 module SilverGelatin (
   Solution(..), Step(..),
-  foldEmulsion
+  foldEmulsion, reducer, Mix,
+  -- withLogging, MixIO, runEmulsion
   ) where
 
 -- Hackage
@@ -9,11 +10,12 @@ import GHC.Generics
 import Control.Monad                (foldM)
 import Data.List                    (sort)
 -- Homies
-import Ingredients.Basics           (Quantity, Time, Temperature, Rate, molecularWeight)
+import Ingredients.Basics           (Time, Temperature, Rate, molecularWeight)
 import Ingredients.SilverNitrate    (SilverNitrate(..))
 import Ingredients.SilverHalide     (SilverHalide(..), mergeHalides)
 import Ingredients.Salt             (Salt(..), mergeSalts)
-import Ingredients.ChemicalModifier (ChemicalModifier)
+import Ingredients.ChemicalModifier  (ChemicalModifier)
+import Text.Printf                  (printf)
 
 -- EMULSIONS
 
@@ -42,12 +44,19 @@ data Step = TEMPERATURE Double
  | STOP deriving (Generic, Show)
 
 -- Pass foldable seq of events
-type Emulsion state step = state -> step -> state
-foldEmulsion :: Foldable f => Emulsion state step -> state -> f step -> state
+type Mix state step = state -> step -> state
+foldEmulsion :: Foldable f => Mix state step -> state -> f step -> state
 foldEmulsion = foldl
 
--- runEmulsion :: (Foldable f, Monad m) => Emulsion state step -> state -> f step -> m state
+-- type MixIO s e = s -> e -> IO s
+-- runEmulsion :: Foldable f => MixIO s e -> s -> f e -> IO s
 -- runEmulsion = foldM
+
+-- withLogging :: (Show s, Show e) => MixIO s e -> MixIO s e
+-- withLogging emulsion s e = do
+--   s' <- emulsion s e
+--   printf "- %s x %s -> %s\n" (show s) (show e) (show s')
+--   return s'
 
 -- CHEMICAL REACTIONS
 
@@ -56,7 +65,7 @@ reducer soln STOP = soln
 reducer soln (REST time) = soln {resting = time}
 reducer soln (PH newPH) = soln {ph = mergePH (ph soln) (Just newPH), resting=0}
 reducer soln (ADDITION newSoln _) = 
-                          let newSalts = sort $ mergeSalts (salts soln) (salts newSoln);
+                          let newSalts = mergeSalts (sort $ salts soln) (sort $ salts newSoln)
                               previousAg = Ingredients.SilverNitrate.amount (agnox soln)
                               nextAg = Ingredients.SilverNitrate.amount (agnox newSoln)
                               newAgnox = SILVERNITRATE {Ingredients.SilverNitrate.amount = previousAg + nextAg}
@@ -69,7 +78,7 @@ reducer soln (ADDITION newSoln _) =
                             ph = newPh,
                             other = other soln ++ other newSoln,
                             water = water soln + water newSoln,
-                            temp = Nothing,
+                            temp = if temp soln == temp newSoln then temp soln else Nothing,
                             resting = 0.0
                           } 
 
