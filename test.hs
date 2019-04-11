@@ -11,3 +11,4 @@ sn = (SILVERNITRATE {Ingredients.SilverNitrate.amount=5})
 br = KBr{Ingredients.Salt.amount=1}
 cl = NaCl{Ingredients.Salt.amount=2}
 reactAGX [] sn [br,cl]
+

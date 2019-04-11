@@ -1,71 +1,85 @@
 {-# LANGUAGE DeriveGeneric #-}
-module SilverGelatin ( 
-  Emulsion(..), Transition,
-  Solution(..), reactAGX, leftoverAGNO
+module SilverGelatin (
+  Solution(..), Step(..),
+  foldEmulsion
   ) where
 
+-- Hackage
 import GHC.Generics
-import Control.Monad.State
-import qualified Data.Foldable as F
-
-import Ingredients.Basics (Quantity, Time, Temperature, Rate, molecularWeight)
-import Ingredients.SilverNitrate (SilverNitrate(..))
-import Ingredients.SilverHalide (SilverHalide(..))
-import Ingredients.Salt (Salt(..))
+import Control.Monad                (foldM)
+import Data.List                    (sort)
+-- Homies
+import Ingredients.Basics           (Quantity, Time, Temperature, Rate, molecularWeight)
+import Ingredients.SilverNitrate    (SilverNitrate(..))
+import Ingredients.SilverHalide     (SilverHalide(..), mergeHalides)
+import Ingredients.Salt             (Salt(..), mergeSalts)
 import Ingredients.ChemicalModifier (ChemicalModifier)
 
--- http://www.tcs.hut.fi/Studies/T-79.186/2004/lecture3.pdf
--- Let AP be a non-empty set of atomic propositions A Kripke structure is a tuple M = (S,s^0,R,L), Where
---  S is a finite set of states
---  s^0 in S is an initial state
---  R:S X S: is a transition relation, for which it holds that for all s in S: there exists s` in S:(s,s`) in R and
---  L:S->2^(AP): is labeling, a function which labels each state with the atomic propositions which hold in that state.
-
--- A path pi in a Kripke structure M = (S,s^0,R,L) is an infinite sequence of states,
--- pi=s0 s1 s2..., such that s0 in I and T(si, si+1)for all i>=0.
-
--- States are emulsion making steps
--- Initial states are unmixed states
--- transitions are mixing things
--- labelling function is the properties (propositions) at each state. Temperature, reactant quantities, etc.
-
--- Emulsion Definitions --
+-- EMULSIONS
 
 type Ph = ChemicalModifier
+
+mergePH :: Maybe Ph -> Maybe Ph -> Maybe Ph
+mergePH (Just phOne) (Just newPH) = Nothing
+mergePH Nothing (Just newPH) = Just newPH
+mergePH (Just phOne) Nothing = Just phOne
 
 data Solution = SOLUTION {
   salts :: [Salt],
   agnox :: SilverNitrate,
   agH :: [SilverHalide],
-  --ph :: Maybe Ph,
+  ph :: Maybe Ph,
   other :: [ChemicalModifier],
   water :: Double,
-  temp :: Temperature
+  temp :: Maybe Temperature,
+  resting :: Double
 } deriving (Generic, Show)
 
-data Transition = TRANSITION { addition :: Solution, rate :: Maybe Rate, waitTimeAfter :: Time} deriving (Generic, Show)
+data Step = TEMPERATURE Double
+ | ADDITION {solution :: Solution, rate :: Rate}
+ | REST Double
+ | PH Ph
+ | STOP deriving (Generic, Show)
 
-data Emulsion = EMULSION {
-  initialSolution :: Solution,
-  transitions :: [Transition]
-} deriving (Generic, Show)
+-- Pass foldable seq of events
+type Emulsion state step = state -> step -> state
+foldEmulsion :: Foldable f => Emulsion state step -> state -> f step -> state
+foldEmulsion = foldl
 
--- data Emulsion = Solution | MIXTURES { transitions :: [Transition] } deriving (Generic, Show)
+-- runEmulsion :: (Foldable f, Monad m) => Emulsion state step -> state -> f step -> m state
+-- runEmulsion = foldM
 
--- Fold --
+-- CHEMICAL REACTIONS
 
--- Combining functions
--- mix :: Solution -> Solution -> Solution
--- mix one two = SOLUTION {
+reducer :: Solution -> Step -> Solution
+reducer soln STOP = soln
+reducer soln (REST time) = soln {resting = time}
+reducer soln (PH newPH) = soln {ph = mergePH (ph soln) (Just newPH), resting=0}
+reducer soln (ADDITION newSoln _) = 
+                          let newSalts = sort $ mergeSalts (salts soln) (salts newSoln);
+                              previousAg = Ingredients.SilverNitrate.amount (agnox soln)
+                              nextAg = Ingredients.SilverNitrate.amount (agnox newSoln)
+                              newAgnox = SILVERNITRATE {Ingredients.SilverNitrate.amount = previousAg + nextAg}
+                              newHalides = mergeHalides (agH soln) (agH newSoln)
+                              newPh = mergePH (ph soln) (ph newSoln)
+                          in SOLUTION {
+                            salts = newSalts,
+                            agnox = leftoverAGNO newAgnox newSalts,
+                            agH = reactAGX newHalides newAgnox newSalts,
+                            ph = newPh,
+                            other = other soln ++ other newSoln,
+                            water = water soln + water newSoln,
+                            temp = Nothing,
+                            resting = 0.0
+                          } 
 
--- }
 
 reactionDifference :: SilverNitrate -> Salt -> Double -- moles nitrate leftover
 reactionDifference (SILVERNITRATE nitrate) salt = nitrateMoles - saltMoles
                                                 where nitrateMW = molecularWeight (SILVERNITRATE nitrate)
                                                       saltMW = molecularWeight salt
                                                       nitrateMoles = nitrate / nitrateMW
-                                                      saltMoles = (Ingredients.Salt.amount salt) / saltMW
+                                                      saltMoles = Ingredients.Salt.amount salt / saltMW
 
 leftoverAGNO :: SilverNitrate -> [Salt] -> SilverNitrate -- react all nitrate
 leftoverAGNO (SILVERNITRATE 0) _ = SILVERNITRATE {Ingredients.SilverNitrate.amount=0}
@@ -74,12 +88,12 @@ leftoverAGNO nitrate (x:xs) = leftoverAGNO SILVERNITRATE { Ingredients.SilverNit
 
 reactAGX :: [SilverHalide] -> SilverNitrate -> [Salt] -> [SilverHalide]
 reactAGX sh sn (x:xs) = case x of 
-                          (KI sq) -> reactAGX (sh ++ [AgI {Ingredients.SilverHalide.moles = molesAGX}] ) (SILVERNITRATE {Ingredients.SilverNitrate.amount = leftoverGramsAGN}) xs
-                          (KBr sq) -> reactAGX (sh ++ [AgBr {Ingredients.SilverHalide.moles = molesAGX}] ) (SILVERNITRATE {Ingredients.SilverNitrate.amount = leftoverGramsAGN}) xs
-                          (NaCl sq) -> reactAGX (sh ++ [AgCl {Ingredients.SilverHalide.moles = molesAGX}] ) (SILVERNITRATE {Ingredients.SilverNitrate.amount = leftoverGramsAGN}) xs
+                          (KI sq) -> reactAGX (sh `mergeHalides` [AgI {Ingredients.SilverHalide.moles = molesAGX}] ) (SILVERNITRATE {Ingredients.SilverNitrate.amount = leftoverGramsAGN}) xs
+                          (KBr sq) -> reactAGX (sh `mergeHalides` [AgBr {Ingredients.SilverHalide.moles = molesAGX}] ) (SILVERNITRATE {Ingredients.SilverNitrate.amount = leftoverGramsAGN}) xs
+                          (NaCl sq) -> reactAGX (sh `mergeHalides` [AgCl {Ingredients.SilverHalide.moles = molesAGX}] ) (SILVERNITRATE {Ingredients.SilverNitrate.amount = leftoverGramsAGN}) xs
   where mwSilverNitrate = molecularWeight sn;
-        molesAGN = (Ingredients.SilverNitrate.amount sn) / (mwSilverNitrate);
-        molesX = (Ingredients.Salt.amount x) / (molecularWeight x);
+        molesAGN = Ingredients.SilverNitrate.amount sn / mwSilverNitrate;
+        molesX = Ingredients.Salt.amount x / molecularWeight x;
         molesAGX = min molesAGN molesX;
-        leftoverGramsAGN = (mwSilverNitrate) * (molesAGN - (min molesAGN molesX))
+        leftoverGramsAGN = mwSilverNitrate * molesAGN - min molesAGN molesX
 reactAGX sh sn [] = sh

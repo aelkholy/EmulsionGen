@@ -1,0 +1,43 @@
+{
+    "Solution": {
+        "salts": [],
+        "agnox": {
+            "amount": 0.0
+        },
+        "agH": [],
+        "ph": {
+            "name": "HCl",
+            "quantity": {
+              "amount": 2.0,
+              "unit": "MILLILITER",
+              "conc": 0.37
+            }
+          },
+        "other": [
+            {
+              "name": "CdCl2*2H2O",
+              "quantity": {
+                "amount": 0.7,
+                "unit": "GRAM",
+                "conc": null
+              }
+            },
+            {
+              "name": "Albumen",
+              "quantity": {
+                "amount": 2.0,
+                "unit": "MILLILITER",
+                "conc": 0.1
+              }
+            }
+          ],
+        "water": 425.0,
+        "temp": 55.0,
+        "resting": 0.0
+    },
+    "Steps": [
+        {
+            "tag": "STOP"
+        }
+    ]
+}
