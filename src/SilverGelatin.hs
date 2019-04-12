@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 module SilverGelatin (
   Solution(..), Step(..),
-  foldEmulsion, reducer, Mix,
+  foldEmulsion, reducer, Mix, reactAGX
   -- withLogging, MixIO, runEmulsion
   ) where
 
@@ -82,6 +82,8 @@ reducer soln (ADDITION newSoln _) =
                             resting = 0.0
                           } 
 
+-- removeSalts :: SilverNitrate -> [Salt] -> [Salt] -- assumes sorted salts
+-- removeSalts sn (s:ss) = 
 
 reactionDifference :: SilverNitrate -> Salt -> Double -- moles nitrate leftover
 reactionDifference (SILVERNITRATE nitrate) salt = nitrateMoles - saltMoles

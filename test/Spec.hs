@@ -1,9 +1,12 @@
 module Main(main) where
 
+import Data.List
 import Test.Tasty
 import Test.Tasty.HUnit
 import Test.Tasty.QuickCheck
 import qualified Test.Tasty.SmallCheck as SC
+--
+import Ingredients.Salt
 
 main :: IO ()
 main = defaultMain suite
@@ -16,16 +19,32 @@ negation x = abs (x^2) >= x
 
 suite :: TestTree
 suite = testGroup "Test Suite" [
-    testGroup "Units"
-      [ testCase "Equality" $ True @=? True
-      , testCase "Assertion" $ assert $ length [1,2,3] == 3
-      ],
+    -- testGroup "Units"
+    --   [ testCase "Equality" $ True @=? True
+    --   , testCase "Assertion" $ assert $ length [1,2,3] == 3
+    --   ],
 
     testGroup "QuickCheck tests"
-      [ testProperty "Quickcheck test" arith
-      ],
-
-    testGroup "SmallCheck tests"
-      [ SC.testProperty "Negation" negation
+      [ testProperty "Salt order is preserved" saltOrderPreserved
       ]
+
+    -- testGroup "SmallCheck tests"
+    --   [ SC.testProperty "Negation" negation
+    --   ]
   ]
+
+saltOrderPreserved :: [Salt] -> [Salt] -> Bool
+saltOrderPreserved x y = merged == sort merged where merged = mergeSalts (sort x) (sort y)
+
+instance Arbitrary Salt where
+  arbitrary = oneof [arbitraryIodide,arbitraryBromide,arbitraryChloride]
+      where 
+        arbitraryIodide = do
+          p <- arbitrary
+          return $ KI $ abs p
+        arbitraryBromide = do
+          p <- arbitrary
+          return $ KBr $ abs p
+        arbitraryChloride = do
+          p <- arbitrary
+          return $ NaCl $ abs p

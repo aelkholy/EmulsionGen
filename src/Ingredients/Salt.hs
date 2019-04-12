@@ -1,10 +1,11 @@
 {-# LANGUAGE DeriveGeneric #-}
 module Ingredients.Salt (
-  Salt(..), mergeSalts
+  Salt(..), mergeSalts, mergeSalt
 ) where
 
 import GHC.Generics
 import Data.Maybe (catMaybes)
+import Control.Monad
 import Ingredients.Basics (Chemical(..))
 
 data Salt = KI {amount :: Double}
@@ -23,4 +24,12 @@ mergeSalt (NaCl x) (NaCl y) = Just NaCl{amount = x + y}
 mergeSalt _ _ = Nothing
 
 mergeSalts :: [Salt] -> [Salt] -> [Salt]
-mergeSalts saltsOne saltsTwo = catMaybes [ mergeSalt x y | x <- saltsOne, y <- saltsTwo]
+mergeSalts ones twos = let 
+  comb = ones ++ twos
+  ki = [ x | x@(KI _) <- comb ]
+  br = [ x | x@(KBr _) <- comb ]
+  na = [ x | x@(NaCl _) <- comb ]
+  ki_merged = if length ki > 1 then foldM mergeSalt (KI{amount=0.0}) ki else if length ki == 1 then Just $ head ki else Nothing
+  br_merged = if length br > 1 then foldM mergeSalt (KBr{amount=0.0}) br else if length br == 1 then Just $ head br else Nothing
+  na_merged = if length na > 1 then foldM mergeSalt (NaCl{amount=0.0}) na else if length na == 1 then Just $ head na else Nothing
+  in catMaybes (ki_merged : br_merged : na_merged : [])
