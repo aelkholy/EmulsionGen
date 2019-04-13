@@ -16,6 +16,7 @@ instance Chemical Salt where
   molecularWeight (KI _) = 166.0028
   molecularWeight (KBr _) = 119.002
   molecularWeight (NaCl _) = 58.44
+  grams = amount
 
 mergeSalt :: Salt -> Salt -> Maybe Salt
 mergeSalt (KI x) (KI y) = Just KI{amount = x + y}

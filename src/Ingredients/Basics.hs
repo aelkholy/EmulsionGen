@@ -17,3 +17,11 @@ data Rate = RATE { amountAdded :: Double, overTime :: Time } deriving (Generic, 
 
 class Chemical a where
   molecularWeight :: a -> Double
+  grams :: a -> Double
+  moles :: a -> Double
+  moles x = grams x / molecularWeight x
+  molesToGrams :: a -> Double -> Double
+  molesToGrams x amt = amt * molecularWeight x
+  react :: Chemical b => a -> b -> Double
+  react x y = molesToGrams x leftoverMoles
+    where leftoverMoles = min (moles x) (moles y)

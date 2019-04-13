@@ -12,3 +12,4 @@ data SilverNitrate = SILVERNITRATE {amount :: Double} deriving (Generic, Show)
 
 instance Chemical SilverNitrate where
   molecularWeight _ = 169.87
+  grams = amount

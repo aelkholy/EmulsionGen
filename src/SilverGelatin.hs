@@ -1,7 +1,9 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE LambdaCase #-}
 module SilverGelatin (
   Solution(..), Step(..),
-  foldEmulsion, reducer, Mix, reactAGX
+  foldEmulsion, reducer, Mix, 
+  silverReaction, halideReaction
   -- withLogging, MixIO, runEmulsion
   ) where
 
@@ -10,7 +12,7 @@ import GHC.Generics
 import Control.Monad                (foldM)
 import Data.List                    (sort)
 -- Homies
-import Ingredients.Basics           (Time, Temperature, Rate, molecularWeight)
+import Ingredients.Basics           (Time, Temperature, Rate, Chemical(..))
 import Ingredients.SilverNitrate    (SilverNitrate(..))
 import Ingredients.SilverHalide     (SilverHalide(..), mergeHalides)
 import Ingredients.Salt             (Salt(..), mergeSalts)
@@ -65,46 +67,46 @@ reducer soln STOP = soln
 reducer soln (REST time) = soln {resting = time}
 reducer soln (PH newPH) = soln {ph = mergePH (ph soln) (Just newPH), resting=0}
 reducer soln (ADDITION newSoln _) = 
-                          let newSalts = mergeSalts (sort $ salts soln) (sort $ salts newSoln)
+                          let newSalts = sort $ mergeSalts (salts soln) (salts newSoln)
                               previousAg = Ingredients.SilverNitrate.amount (agnox soln)
                               nextAg = Ingredients.SilverNitrate.amount (agnox newSoln)
-                              newAgnox = SILVERNITRATE {Ingredients.SilverNitrate.amount = previousAg + nextAg}
+                              newAgnox = (SILVERNITRATE $ previousAg + nextAg)
                               newHalides = mergeHalides (agH soln) (agH newSoln)
                               newPh = mergePH (ph soln) (ph newSoln)
                           in SOLUTION {
-                            salts = newSalts,
-                            agnox = leftoverAGNO newAgnox newSalts,
-                            agH = reactAGX newHalides newAgnox newSalts,
+                            salts = saltReaction newAgnox newSalts,
+                            agnox = silverReaction newAgnox newSalts,
+                            agH = mergeHalides newHalides $ halideReaction newAgnox newSalts,
                             ph = newPh,
                             other = other soln ++ other newSoln,
                             water = water soln + water newSoln,
                             temp = if temp soln == temp newSoln then temp soln else Nothing,
                             resting = 0.0
-                          } 
+                          }
 
--- removeSalts :: SilverNitrate -> [Salt] -> [Salt] -- assumes sorted salts
--- removeSalts sn (s:ss) = 
+saltReaction :: SilverNitrate -> [Salt] -> [Salt]
+saltReaction sn [] = []
+saltReaction sn (x:xs) = saltReaction leftoverNitrate xs ++ [leftoverSalt]
+  where leftoverNitrate = SILVERNITRATE $ react sn x
+        leftoverSalt = case x of 
+          (KI amt) -> KI (amt - react x sn)
+          (KBr amt) -> KBr (amt - react x sn)
+          (NaCl amt) -> NaCl (amt - react x sn)
 
-reactionDifference :: SilverNitrate -> Salt -> Double -- moles nitrate leftover
-reactionDifference (SILVERNITRATE nitrate) salt = nitrateMoles - saltMoles
-                                                where nitrateMW = molecularWeight (SILVERNITRATE nitrate)
-                                                      saltMW = molecularWeight salt
-                                                      nitrateMoles = nitrate / nitrateMW
-                                                      saltMoles = Ingredients.Salt.amount salt / saltMW
+silverReaction :: SilverNitrate -> [Salt] -> SilverNitrate
+silverReaction sn [] = sn
+silverReaction sn (s:ss) = final 
+  where firstLost = react sn s
+        first = SILVERNITRATE{Ingredients.SilverNitrate.amount=Ingredients.SilverNitrate.amount sn - firstLost}
+        final = foldl (\a b->SILVERNITRATE {Ingredients.SilverNitrate.amount=max 0 (Ingredients.SilverNitrate.amount sn - react a b - firstLost)}) first ss
 
-leftoverAGNO :: SilverNitrate -> [Salt] -> SilverNitrate -- react all nitrate
-leftoverAGNO (SILVERNITRATE 0) _ = SILVERNITRATE {Ingredients.SilverNitrate.amount=0}
-leftoverAGNO s [] = s
-leftoverAGNO nitrate (x:xs) = leftoverAGNO SILVERNITRATE { Ingredients.SilverNitrate.amount = max (reactionDifference nitrate x) 0.0 } xs
-
-reactAGX :: [SilverHalide] -> SilverNitrate -> [Salt] -> [SilverHalide]
-reactAGX sh sn (x:xs) = case x of 
-                          (KI sq) -> reactAGX (sh `mergeHalides` [AgI {Ingredients.SilverHalide.moles = molesAGX}] ) (SILVERNITRATE {Ingredients.SilverNitrate.amount = leftoverGramsAGN}) xs
-                          (KBr sq) -> reactAGX (sh `mergeHalides` [AgBr {Ingredients.SilverHalide.moles = molesAGX}] ) (SILVERNITRATE {Ingredients.SilverNitrate.amount = leftoverGramsAGN}) xs
-                          (NaCl sq) -> reactAGX (sh `mergeHalides` [AgCl {Ingredients.SilverHalide.moles = molesAGX}] ) (SILVERNITRATE {Ingredients.SilverNitrate.amount = leftoverGramsAGN}) xs
-  where mwSilverNitrate = molecularWeight sn;
-        molesAGN = Ingredients.SilverNitrate.amount sn / mwSilverNitrate;
-        molesX = Ingredients.Salt.amount x / molecularWeight x;
-        molesAGX = min molesAGN molesX;
-        leftoverGramsAGN = mwSilverNitrate * molesAGN - min molesAGN molesX
-reactAGX sh sn [] = sh
+halideReaction :: SilverNitrate -> [Salt] -> [SilverHalide]
+halideReaction sn [] = []
+halideReaction sn (s:alts) = reactor s : halideReaction (silverReaction sn [s]) alts
+  where wat = react sn
+        reactor = \case { 
+        a@(KI amt) -> AgI $ wat a;
+        a@(KBr amt) -> AgBr $ wat a;
+        a@(NaCl amt) -> AgCl $ wat a
+        }
+    
