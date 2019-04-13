@@ -1,4 +1,4 @@
-# Simple SAT #
+# EmulsionGen #
 ## Description ##
 EmulsionGen is an assistive tool for the analysis and making of photographic, silver gelatin based emulsions.
 
