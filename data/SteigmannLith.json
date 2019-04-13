@@ -1,138 +1,168 @@
-{
-  "initialSolution": {
-    "salts": null,
-    "ag": null,
-    "ph": {
-        "name": "HCl",
-        "quantity": {
-          "amount": 2.0,
-          "unit": "MILLILITER",
-          "conc": 0.37
-        },
-        "mWeight": 36.46
-      },
-    "other": [
-      {
-        "name": "CdCl2*2H2O",
-        "mWeight": 219.351,
-        "quantity": {
-          "amount": 0.7,
-          "unit": "GRAM",
-          "conc": null
-        }
-      },
-      {
-        "name": "Albumen",
-        "weight": null,
-        "quantity": {
-          "amount": 2.0,
-          "unit": "MILLILITER",
-          "conc": 0.1
-        }
-      }
-    ],
-    "water": 425,
-    "temp": 55.0
-  },
-  "transitions": [
+[
     {
-      "addition":{
-        "salts": null,
-        "ag": {
-          "quantity": {
-            "amount": 20.0,
-            "unit": "GRAM",
-            "conc": null
-          }
+        "salts": [],
+        "agnox": {
+            "amount": 0.0
         },
-        "ph": null,
-        "other": null,
-        "water": 100.0,
-        "temp": 55.0
-      },
-      "rate":{
-        "amountAdded": 1.0,
-        "overTime": 0.0
-      },
-      "waitTimeAfter":0.0
-    },
-    {
-      "addition":{
-        "salts": [
-          {
-            "tag": "KBr",
-            "quantity": {
-              "amount": 1.5,
-              "unit": "GRAM",
-              "conc": null
-            }
+        "agH": [],
+        "ph": {
+            "name": "HCl",
+            "amount": 2.0,
+            "unit": "MILLILITER",
+            "conc": 0.37
           },
-          {
-            "tag": "NaCl",
-            "quantity": {
-              "amount": 7,
+        "other": [
+            {
+              "name": "CdCl2*2H2O",
+              "amount": 0.7,
               "unit": "GRAM",
               "conc": null
+            },
+            {
+              "name": "Albumen",
+              "amount": 2.0,
+              "unit": "MILLILITER",
+              "conc": 0.1
             }
-          }
-        ],
-        "ag": null,
-        "ph": null,
-        "other": [
-          {
-            "name": "CdCl2*2H2O",
-            "weight": 219.351,
-            "quantity": {
+          ],
+        "water": 425.0,
+        "temp": 55.0,
+        "resting": 0.0
+    },
+    [
+      {
+        "tag": "ADDITION",
+        "rate":{
+          "amountAdded": 1.0,
+          "overTime": 0.0
+        },
+        "solution": {
+          "salts": [],
+          "agnox": {
+              "amount": 20.0
+          },
+          "agH": [],
+          "ph": null,
+          "other": [],
+          "water": 100.0,
+          "temp": 55.0,
+          "resting": 0.0
+        }
+      },
+      {
+        "tag": "ADDITION",
+        "rate":{
+          "amountAdded": 1.0,
+          "overTime": 0.0
+        },
+        "solution": {
+          "salts": [
+            {
+              "tag": "KBr",
+              "amount": 1.5
+            },
+            {
+              "tag": "NaCl",
+              "amount": 7
+            }
+          ],
+          "agnox": {
+              "amount": 0.0
+          },
+          "agH": [],
+          "ph": null,
+          "other": [
+            {
+              "name": "CdCl2*2H2O",
               "amount": 0.7,
               "unit": "GRAM",
               "conc": null
             }
-          }
-        ],
-        "water": 40.0,
-        "temp": 55.0
+          ],
+          "water": 40.0,
+          "temp": 55.0,
+          "resting": 0.0
+        }
       },
-      "rate":{
-        "amountAdded": 1.0,
-        "overTime": 0.0
-      },
-      "waitTimeAfter":0.0
-    },
-    {
-      "addition":{
-        "salts": [
-          {
-            "tag": "KI",
-            "quantity": {
-              "amount": 12,
-              "unit": "MILLILITER",
-              "conc": 0.002
+      {
+        "tag": "ADDITION",
+        "rate":{
+          "amountAdded": 1.0,
+          "overTime": 0.0
+        },
+        "solution": {
+          "salts": [
+            {
+              "tag": "KI",
+              "amount": 0.12
             }
-          }
-        ],
-        "ag": null,
-        "ph": null,
-        "other": null,
-        "water": 0,
-        "temp": null
+          ],
+          "agnox": {
+              "amount": 0.0
+          },
+          "agH": [],
+          "ph": null,
+          "other": [],
+          "water": 12.0,
+          "temp": null,
+          "resting": 0.0
+        }
       },
-      "rate":{
-        "amountAdded": 1.0,
-        "overTime": 0.0
+      {
+        "tag": "TEMPERATURE",
+        "temperature": 60.0
       },
-      "waitTimeAfter":0.0
-    },
-    {
-      "addition":{
-        "salts": null,
-        "ag": null,
-        "ph": null,
-        "other": null,
-        "water": 0,
-        "temp": 60.0
+      {
+        "tag": "REST",
+        "time": 60.0
       },
-      "rate":null,
-      "waitTimeAfter": 60.0
-    }
-  ]
-}
+      {
+        "tag": "ADDITION",
+        "rate":{
+          "amountAdded": 1.0,
+          "overTime": 0.0
+        },
+        "solution": {
+          "salts": [],
+          "agnox": {
+              "amount": 0.0
+          },
+          "agH": [],
+          "ph": null,
+          "other": [
+            {
+              "name":"Magnesium Oxide",
+              "amount":0.3,
+              "unit":"GRAM",
+              "conc":null
+            }
+          ],
+          "water": 12.0,
+          "temp": null,
+          "resting": 0.0
+        }
+      },
+      {
+        "tag": "ADDITION",
+        "rate":{
+          "amountAdded": 1.0,
+          "overTime": 0.0
+        },
+        "solution": {
+          "salts": [],
+          "agnox": {
+              "amount": 3.0
+          },
+          "agH": [],
+          "ph": null,
+          "other": [],
+          "water": 30.0,
+          "temp": null,
+          "resting": 0.0
+        }
+      },
+      {
+          "tag": "STOP"
+      }
+    ]
+]

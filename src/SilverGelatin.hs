@@ -3,7 +3,7 @@
 module SilverGelatin (
   Solution(..), Step(..),
   foldEmulsion, reducer, Mix, 
-  silverReaction, halideReaction
+  silverReaction, halideReaction, saltReaction
   -- withLogging, MixIO, runEmulsion
   ) where
 
@@ -39,10 +39,10 @@ data Solution = SOLUTION {
   resting :: Double
 } deriving (Generic, Show)
 
-data Step = TEMPERATURE Double
+data Step = TEMPERATURE {temperature :: Double}
  | ADDITION {solution :: Solution, rate :: Rate}
- | REST Double
- | PH Ph
+ | REST {time :: Double}
+ | PH {newPh ::Ph}
  | STOP deriving (Generic, Show)
 
 -- Pass foldable seq of events
@@ -64,6 +64,7 @@ foldEmulsion = foldl
 
 reducer :: Solution -> Step -> Solution
 reducer soln STOP = soln
+reducer soln (TEMPERATURE newTemp) = soln {temp = Just newTemp}
 reducer soln (REST time) = soln {resting = time}
 reducer soln (PH newPH) = soln {ph = mergePH (ph soln) (Just newPH), resting=0}
 reducer soln (ADDITION newSoln _) = 
@@ -74,7 +75,7 @@ reducer soln (ADDITION newSoln _) =
                               newHalides = mergeHalides (agH soln) (agH newSoln)
                               newPh = mergePH (ph soln) (ph newSoln)
                           in SOLUTION {
-                            salts = saltReaction newAgnox newSalts,
+                            salts = sort $ saltReaction newAgnox newSalts,
                             agnox = silverReaction newAgnox newSalts,
                             agH = mergeHalides newHalides $ halideReaction newAgnox newSalts,
                             ph = newPh,
