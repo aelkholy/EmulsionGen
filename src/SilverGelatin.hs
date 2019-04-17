@@ -10,7 +10,7 @@ module SilverGelatin (
 -- Hackage
 import GHC.Generics
 import Control.Monad                (foldM)
-import Data.List                    (sort)
+import Data.List                    (sort, unfoldr)
 -- Homies
 import Ingredients.Basics           (Time, Temperature, Rate, Chemical(..))
 import Ingredients.SilverNitrate    (SilverNitrate(..))
@@ -69,15 +69,19 @@ reducer soln (REST time) = soln {resting = time}
 reducer soln (PH newPH) = soln {ph = mergePH (ph soln) (Just newPH), resting=0}
 reducer soln (ADDITION newSoln _) = 
                           let newSalts = sort $ mergeSalts (salts soln) (salts newSoln)
-                              previousAg = Ingredients.SilverNitrate.amount (agnox soln)
-                              nextAg = Ingredients.SilverNitrate.amount (agnox newSoln)
-                              newAgnox = (SILVERNITRATE $ previousAg + nextAg)
+                              newAgnox = (SILVERNITRATE $ Ingredients.SilverNitrate.amount (agnox soln) + Ingredients.SilverNitrate.amount (agnox newSoln))
                               newHalides = mergeHalides (agH soln) (agH newSoln)
                               newPh = mergePH (ph soln) (ph newSoln)
+                              newStuff = saltsToHalides (newAgnox, newSalts)
+                              reactedNitrate = map fst newStuff
+                              leftoverNitrate = if not (null reactedNitrate) then last reactedNitrate else SILVERNITRATE 0.0
+                              reactedHalides = map snd newStuff
                           in SOLUTION {
                             salts = sort $ saltReaction newAgnox newSalts,
-                            agnox = silverReaction newAgnox newSalts,
-                            agH = mergeHalides newHalides $ halideReaction newAgnox newSalts,
+                            -- agnox = silverReaction newAgnox newSalts,
+                            -- agH = mergeHalides newHalides $ halideReaction newAgnox newSalts,
+                            agnox = leftoverNitrate,
+                            agH = mergeHalides newHalides reactedHalides,
                             ph = newPh,
                             other = other soln ++ other newSoln,
                             water = water soln + water newSoln,
@@ -85,10 +89,31 @@ reducer soln (ADDITION newSoln _) =
                             resting = 0.0
                           }
 
+-- unfoldr :: (b -> Maybe (a, b)) -> b -> [a]
+-- a = (nitrate, halide)
+-- b = (nitrate, [salt])
+-- unfoldr :: (b -> Maybe (a, b)) -> b -> [a]
+saltsToHalides :: (SilverNitrate, [Salt]) -> [(SilverNitrate, SilverHalide)]
+saltsToHalides (sn, ss) = unfoldr reactor (sn, ss)
+  -- where newHalide x = \case
+  --                     a@(KI amt) -> AgI $ react x a
+  --                     a@(KBr amt) -> AgBr $ react x a
+  --                     a@(NaCl amt) -> AgCl $ react x a
+  --       reactor (nitrate, s:alts) = Just((SILVERNITRATE $ react nitrate s, newHalide nitrate s), (SILVERNITRATE $ react sn s, alts))
+
+reactor :: (SilverNitrate, [Salt]) -> Maybe ((SilverNitrate, SilverHalide), (SilverNitrate, [Salt]))
+reactor (nitrate, []) = Nothing
+reactor (nitrate, s:alts) = Just((newNitrate, newHalide s), (newNitrate, alts))
+  where newNitrate = SILVERNITRATE $ Ingredients.SilverNitrate.amount nitrate - react nitrate s
+        newHalide = \case
+          a@(KI amt) -> AgI $ react a nitrate
+          a@(KBr amt) -> AgBr $ react a nitrate
+          a@(NaCl amt) -> AgCl $ react a nitrate
+
 saltReaction :: SilverNitrate -> [Salt] -> [Salt]
 saltReaction sn [] = []
 saltReaction sn (x:xs) = saltReaction leftoverNitrate xs ++ [leftoverSalt]
-  where leftoverNitrate = SILVERNITRATE $ react sn x
+  where leftoverNitrate = SILVERNITRATE $ Ingredients.SilverNitrate.amount sn - react sn x
         leftoverSalt = case x of 
           (KI amt) -> KI (amt - react x sn)
           (KBr amt) -> KBr (amt - react x sn)
@@ -110,4 +135,3 @@ halideReaction sn (s:alts) = reactor s : halideReaction (silverReaction sn [s]) 
         a@(KBr amt) -> AgBr $ wat a;
         a@(NaCl amt) -> AgCl $ wat a
         }
-    
