@@ -56,7 +56,7 @@ suite = testGroup "Test Suite" [
 -- halideReaction :: SilverNitrate -> [Salt] -> [SilverHalide]
 onlyThreeHalides :: SilverNitrate -> [IS.Salt] -> Bool
 onlyThreeHalides a b = length output <= 3
-  where output = halideReaction a (IS.mergeSalts [] b)
+  where output = halideReaction a (IS.mergeSalts b)
 
 -- halideReaction :: SilverNitrate -> [Salt] -> [SilverHalide]
 sameHalideOutputAmounts :: SilverNitrate -> [IS.Salt] -> Bool

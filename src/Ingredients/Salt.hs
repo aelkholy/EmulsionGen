@@ -24,9 +24,8 @@ mergeSalt (KBr x) (KBr y) = Just KBr{amount = x + y}
 mergeSalt (NaCl x) (NaCl y) = Just NaCl{amount = x + y}
 mergeSalt _ _ = Nothing
 
-mergeSalts :: [Salt] -> [Salt] -> [Salt]
-mergeSalts ones twos = let 
-  comb = ones ++ twos
+mergeSalts :: [Salt] -> [Salt]
+mergeSalts comb = let
   ki = [ x | x@(KI _) <- comb ]
   br = [ x | x@(KBr _) <- comb ]
   na = [ x | x@(NaCl _) <- comb ]

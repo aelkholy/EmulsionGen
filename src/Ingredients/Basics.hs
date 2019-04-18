@@ -22,6 +22,10 @@ class Chemical a where
   moles x = grams x / molecularWeight x
   molesToGrams :: a -> Double -> Double
   molesToGrams x amt = amt * molecularWeight x
-  react :: Chemical b => a -> b -> Double
-  react x y = molesToGrams x leftoverMoles
+  reactForAmountB :: Chemical b => a -> b -> Double
+  reactForAmountB x y = leftoverMoles
     where leftoverMoles = min (moles x) (moles y)
+  reactForLeftoverA :: Chemical b => a -> b -> Double
+  reactForLeftoverA x y = molesToGrams x finalMoles
+    where leftoverMoles = min (moles x) (moles y)
+          finalMoles = moles x - leftoverMoles
