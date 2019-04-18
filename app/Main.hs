@@ -8,6 +8,7 @@ import System.Environment
 import System.IO  
 import Control.Monad
 import Data.Aeson
+import Control.Monad.Writer
 
 main :: IO ()
 main = do
@@ -18,5 +19,5 @@ main = do
             file <- B.readFile filePath
             case decoder file of
                 Left err -> System.IO.putStrLn err
-                Right ps -> print ps
+                Right ps -> print $ runWriter ps
       _ -> error "too many arguments"

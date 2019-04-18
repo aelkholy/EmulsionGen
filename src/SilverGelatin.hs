@@ -11,6 +11,7 @@ module SilverGelatin (
 import GHC.Generics
 import Control.Monad                (foldM)
 import Data.List                    (sort, unfoldr)
+import Control.Monad.Writer
 -- Homies
 import Ingredients.Basics           (Time, Temperature, Rate, Chemical(..))
 import Ingredients.SilverNitrate    (SilverNitrate(..))
@@ -46,37 +47,45 @@ data Step = TEMPERATURE {temperature :: Double}
  | STOP deriving (Generic, Show)
 
 -- Pass foldable seq of events
-type Mix state step = state -> step -> state
-foldEmulsion :: Foldable f => Mix state step -> state -> f step -> state
-foldEmulsion = foldl
+type Mix state step = state -> step -> Writer String state
+foldEmulsion :: Foldable f => Mix state step -> state -> f step -> Writer String state
+foldEmulsion = foldM
 
 -- CHEMICAL REACTIONS
 
-reducer :: Solution -> Step -> Solution
-reducer soln STOP = soln
-reducer soln (TEMPERATURE newTemp) = soln {temp = Just newTemp}
-reducer soln (REST time) = soln {resting = time}
-reducer soln (PH newPH) = soln {ph = mergePH (ph soln) (Just newPH), resting=0}
-reducer soln (ADDITION newSoln _) = 
-                          let newSalts = sort $ mergeSalts $ salts soln ++ salts newSoln
-                              newAgnox = (SILVERNITRATE $ Ingredients.SilverNitrate.amount (agnox soln) + Ingredients.SilverNitrate.amount (agnox newSoln))
-                              reaction = saltsToHalides (newAgnox, newSalts) 
-                              reactedNitrate = map fst reaction
-                              leftoverNitrate = if not (null reactedNitrate) then last reactedNitrate else SILVERNITRATE 0.0
-                              reactedHalides = map snd reaction
-                              previousHalides = mergeHalides (agH soln) (agH newSoln)
-                              newPh = mergePH (ph soln) (ph newSoln)
-                          in SOLUTION {
-                            salts = saltReaction newAgnox newSalts,
-                            agnox = leftoverNitrate,
-                            agH = mergeHalides previousHalides reactedHalides,
-                            ph = newPh,
-                            other = other soln ++ other newSoln,
-                            water = water soln + water newSoln,
-                            temp = if temp soln == temp newSoln then temp soln else Nothing,
-                            resting = 0.0
-                          }
-
+reducer :: Solution -> Step ->  Writer String Solution
+reducer soln STOP = do
+  tell "Finished"
+  return soln
+reducer soln (TEMPERATURE newTemp) = do
+  tell $ "Setting temperature to " ++ show newTemp
+  return soln {temp = Just newTemp}
+reducer soln (REST time) = do
+  tell $ "Waiting for " ++ show time ++ " minutes"
+  return soln {resting = time}
+reducer soln (PH newPH) = do
+  tell $ "Setting pH with " ++ show newPH
+  return soln {ph = mergePH (ph soln) (Just newPH), resting=0}
+reducer soln (ADDITION newSoln _) = do
+  tell "mixing"
+  return SOLUTION {
+    salts = saltReaction newAgnox newSalts,
+    agnox = leftoverNitrate,
+    agH = mergeHalides previousHalides reactedHalides,
+    ph = newPh,
+    other = other soln ++ other newSoln,
+    water = water soln + water newSoln,
+    temp = if temp soln == temp newSoln then temp soln else Nothing,
+    resting = 0.0
+  }
+  where newSalts = sort $ mergeSalts $ salts soln ++ salts newSoln
+        newAgnox = SILVERNITRATE $ Ingredients.SilverNitrate.amount (agnox soln) + Ingredients.SilverNitrate.amount (agnox newSoln)
+        reaction = saltsToHalides (newAgnox, newSalts) 
+        reactedNitrate = map fst reaction
+        leftoverNitrate = if not (null reactedNitrate) then last reactedNitrate else SILVERNITRATE 0.0
+        reactedHalides = map snd reaction
+        previousHalides = mergeHalides (agH soln) (agH newSoln)
+        newPh = mergePH (ph soln) (ph newSoln)
 
 saltsToHalides :: (SilverNitrate, [Salt]) -> [(SilverNitrate, SilverHalide)]
 saltsToHalides (sn, ss) = unfoldr reactor (sn, ss)

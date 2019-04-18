@@ -13,6 +13,7 @@ import Ingredients.ChemicalModifier          (ChemicalModifier)
 import Data.Aeson                           ( FromJSON, ToJSON, eitherDecode )
 import Data.Aeson.Types                     ( Parser )
 import Control.Monad
+import Control.Monad.Writer
 import System.IO  
 import System.Environment
 import qualified Data.ByteString.Lazy as B
@@ -45,7 +46,7 @@ instance ToJSON Rate
 instance FromJSON Step
 instance ToJSON Step
 
-decoder :: B.ByteString -> Either String Solution
+decoder :: B.ByteString -> Either String (Writer String Solution)
 decoder arg = do
         raw <- inputs
         Right $ foldEmulsion (reducer) (fst raw) (snd raw)
