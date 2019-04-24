@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 module Ingredients.Salt (
-  Salt(..), mergeSalts, mergeSalt
+  Salt(..), mergeSalts, mergeSalt, prettySalt
 ) where
 
 import GHC.Generics
@@ -17,6 +17,11 @@ instance Chemical Salt where
   molecularWeight (KBr _) = 119.002
   molecularWeight (NaCl _) = 58.44
   grams = amount
+
+prettySalt :: Salt -> String
+prettySalt (KI s) = unwords ["Potassium Iodine" , show s, "grams"]
+prettySalt (KBr s) = unwords ["Potassium Bromide" , show s, "grams"]
+prettySalt (NaCl s) = unwords ["Sodium Chloride" , show s, "grams"]
 
 mergeSalt :: Salt -> Salt -> Maybe Salt
 mergeSalt (KI x) (KI y) = Just KI{amount = x + y}

@@ -19,5 +19,5 @@ main = do
             file <- B.readFile filePath
             case decoder file of
                 Left err -> System.IO.putStrLn err
-                Right ps -> print $ runWriter ps
+                Right ps -> putStr ( snd $ runWriter ps )
       _ -> error "too many arguments"

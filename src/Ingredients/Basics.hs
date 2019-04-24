@@ -2,7 +2,7 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 module Ingredients.Basics (
   Time, Temperature,
-  Unit (..),
+  Unit (..), prettyUnit,
   Rate, Chemical (..)
 ) where
 
@@ -14,6 +14,11 @@ type Time = Double
 type Temperature = Double
 data Unit = GRAM | MILLILITER  deriving (Generic, Show, Typeable, Data)
 data Rate = RATE { amountAdded :: Double, overTime :: Time } deriving (Generic, Show) -- percent / over time minutes
+
+prettyUnit :: Unit -> String
+prettyUnit GRAM = "grams"
+prettyUnit MILLILITER = "milliliters"
+
 
 class Chemical a where
   molecularWeight :: a -> Double
