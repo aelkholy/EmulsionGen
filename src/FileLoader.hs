@@ -4,7 +4,7 @@ module FileLoader (
 
 -- Home team
 import Emulsion
-import Physics                              (Time, Temperature, Rate, Unit)
+import Physics                              (Rate, Unit)
 import Ingredients.SilverNitrate            (SilverNitrate)
 import Ingredients.SilverHalide             (SilverHalide)
 import Ingredients.Salt                     (Salt)
@@ -22,8 +22,15 @@ import qualified Data.ByteString.Lazy as B
 -- encode :: ToJSON a => a -> ByteString
 -- eitherDecode :: FromJSON a => ByteString -> Either String a
 
+-- Physics
+
+instance FromJSON Rate
+instance ToJSON Rate
+
 instance FromJSON Unit
 instance ToJSON Unit
+
+-- Ingredients
 
 instance FromJSON SilverHalide
 instance ToJSON SilverHalide
@@ -37,11 +44,10 @@ instance ToJSON ChemicalModifier
 instance FromJSON Salt
 instance ToJSON Salt
 
+-- Emulsion
+
 instance FromJSON Solution
 instance ToJSON Solution
-
-instance FromJSON Rate
-instance ToJSON Rate
 
 instance FromJSON Step
 instance ToJSON Step

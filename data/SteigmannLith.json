@@ -25,16 +25,13 @@
         ],
       "water": 425.0,
       "temp": 55.0,
-      "resting": 0.0
+      "currentlyResting": 0.0
   },
   [
     {
       "tag": "ADDITION",
-      "rate":{
-        "amountAdded": 1.0,
-        "overTime": 0.0
-      },
-      "solutions": [{
+      "solutions": [
+        [{
         "salts": [],
         "agnox": {
             "gramAmount": 20.0
@@ -44,49 +41,56 @@
         "other": [],
         "water": 100.0,
         "temp": 55.0,
-        "resting": 0.0
+        "currentlyResting": 0.0
+      },
+      {
+        "amountAdded": 1.0,
+        "overSeconds": 0.0
       }]
+    ]
     },
     {
       "tag": "ADDITION",
-      "rate":{
-        "amountAdded": 1.0,
-        "overTime": 0.0
-      },
-      "solutions": [{
-        "salts": [
+      "solutions": [
+        [
           {
-            "tag": "KBr",
-            "amount": 1.5
+            "salts": [
+              {
+                "tag": "KBr",
+                "amount": 1.5
+              },
+              {
+                "tag": "NaCl",
+                "amount": 7
+              }
+            ],
+            "agnox":{},
+            "agH": [],
+            "ph": null,
+            "other": [
+              {
+                "name": "CdCl2*2H2O",
+                "amount": 0.7,
+                "unit": "GRAM",
+                "conc": null
+              }
+            ],
+            "water": 40.0,
+            "temp": 55.0,
+            "currentlyResting": 0.0
           },
           {
-            "tag": "NaCl",
-            "amount": 7
+            "amountAdded": 1.0,
+            "overSeconds": 0.0
           }
-        ],
-        "agnox":{},
-        "agH": [],
-        "ph": null,
-        "other": [
-          {
-            "name": "CdCl2*2H2O",
-            "amount": 0.7,
-            "unit": "GRAM",
-            "conc": null
-          }
-        ],
-        "water": 40.0,
-        "temp": 55.0,
-        "resting": 0.0
-      }]
+        ]
+      ]
     },
     {
       "tag": "ADDITION",
-      "rate":{
-        "amountAdded": 1.0,
-        "overTime": 0.0
-      },
-      "solutions": [{
+      "solutions": [
+      [
+        {
         "salts": [
           {
             "tag": "KI",
@@ -99,8 +103,14 @@
         "other": [],
         "water": 12.0,
         "temp": null,
-        "resting": 0.0
-      }]
+        "currentlyResting": 0.0
+      },
+      {
+        "amountAdded": 1.0,
+        "overSeconds": 0.0
+      }
+      ]
+    ]
     },
     {
       "tag": "TEMPERATURE",
@@ -108,50 +118,58 @@
     },
     {
       "tag": "REST",
-      "time": 60.0
+      "minutes": 60.0
     },
     {
       "tag": "ADDITION",
-      "rate":{
-        "amountAdded": 1.0,
-        "overTime": 0.0
-      },
-      "solutions": [{
-        "salts": [],
-        "agnox": {},
-        "agH": [],
-        "ph": null,
-        "other": [
+      "solutions": [
+        [
           {
-            "name":"Magnesium Oxide",
-            "amount":0.3,
-            "unit":"GRAM",
-            "conc":null
+            "salts": [],
+            "agnox": {},
+            "agH": [],
+            "ph": null,
+            "other": [
+              {
+                "name":"Magnesium Oxide",
+                "amount":0.3,
+                "unit":"GRAM",
+                "conc":null
+              }
+            ],
+            "water": 12.0,
+            "temp": null,
+            "currentlyResting": 0.0
+          },
+          {
+            "amountAdded": 1.0,
+            "overSeconds": 0.0
           }
-        ],
-        "water": 12.0,
-        "temp": null,
-        "resting": 0.0
-      }]
+        ]
+    ]
     },
     {
       "tag": "ADDITION",
-      "rate":{
-        "amountAdded": 1.0,
-        "overTime": 0.0
-      },
-      "solutions": [{
-        "salts": [],
-        "agnox": {
-            "gramAmount": 3.0
-        },
-        "agH": [],
-        "ph": null,
-        "other": [],
-        "water": 30.0,
-        "temp": null,
-        "resting": 0.0
-      }]
+      "solutions": [
+        [
+          {
+            "salts": [],
+            "agnox": {
+                "gramAmount": 3.0
+            },
+            "agH": [],
+            "ph": null,
+            "other": [],
+            "water": 30.0,
+            "temp": null,
+            "currentlyResting": 0.0
+          },
+          {
+            "amountAdded": 1.0,
+            "overSeconds": 0.0
+          }
+        ]
+    ]
     },
     {
         "tag": "STOP"

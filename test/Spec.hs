@@ -10,7 +10,7 @@ import qualified Ingredients.Salt         as IS
 import qualified Ingredients.SilverHalide as ISH
 import Ingredients.SilverNitrate
 import Emulsion                     (silverReaction, halideReaction, saltReaction)
-import Ingredients.Basics                (Time, Temperature, Rate, Chemical(..))
+import Ingredients.Basics                (Second, Temperature, Rate, Chemical(..))
 
 
 main :: IO ()

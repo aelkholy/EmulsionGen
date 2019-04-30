@@ -13,7 +13,7 @@ import Data.List                    (sort, unfoldr)
 import Control.Monad.Writer
 import Data.Maybe
 -- Homies
-import Physics                      (Time, Temperature, Rate, prettyTemperature)
+import Physics                      (Second, Minute, Temperature, Rate, prettyTemperature, prettyRate)
 import Ingredients.Ingredient       (Chemical(..))
 import Ingredients.SilverNitrate    (SilverNitrate(..), prettyNitrate)
 import Ingredients.SilverHalide     (SilverHalide(..), mergeHalides)
@@ -37,19 +37,19 @@ data Solution = SOLUTION {
   ph :: Maybe Ph,
   water :: Double,
   temp :: Temperature,
-  resting :: Double
+  currentlyResting :: Minute
 } deriving (Generic, Show)
 
 prettySolution :: Solution -> String
 prettySolution s = str
-    where str = "\t" ++ unwords [ingredients, others]
-          ingredients = unlines $ map prettySalt (salts s) ++ [prettyNitrate $ agnox s] ++ map prettyChemical (other s)
-          others = unwords $ ["-In", show $ water s,"milliliters of water"] ++ [prettyTemperature $ temp s]
+    where str = ingredients ++ others
+          ingredients = unlines ( map ("-" ++) (map prettySalt (salts s) ++ [prettyNitrate $ agnox s] ++ map prettyChemical (other s)) )
+          others = unwords $ ["--In", show $ water s,"milliliters of water"] ++ [prettyTemperature $ temp s]
 
 -- Maybe factor out step
 data Step = TEMPERATURE {temperature :: Temperature}
- | ADDITION {solutions :: [Solution], rate :: Rate}
- | REST {time :: Double}
+ | ADDITION {solutions :: [(Solution, Rate)]}
+ | REST {minutes :: Double}
  | WASH
  | STOP deriving (Generic, Show)
 
@@ -67,15 +67,19 @@ followRecipe soln STOP = do
 followRecipe soln (TEMPERATURE newTemp) = do
   tell $ unlines [ unwords ["SET TEMPERATURE TO", prettyTemperature newTemp] ]
   return soln {temp = newTemp}
-followRecipe soln (REST time) = do
-  tell $ unlines [ unwords ["REST FOR", show time, "MINUTES"] ]
-  return soln {resting = time}
+followRecipe soln (REST minutes) = do
+  tell $ unlines [ unwords ["REST FOR", show minutes, "MINUTES"] ]
+  return soln {currentlyResting = minutes}
 followRecipe soln WASH = do
     tell "WASH EMULSION"
     return soln
-followRecipe soln (ADDITION nextSolns _) = do
-  tell $ unlines (["ADD TO SOLUTION:"] ++ map prettySolution nextSolns)
-  return $ foldl mixer soln nextSolns
+followRecipe soln (ADDITION nextSolns) = do
+  tell $ unlines (["ADD TO SOLUTION:"] ++ do
+      t <- nextSolns
+      [prettySolution (fst t), "--At " ++ prettyRate (snd t)]
+    )
+  return $ foldl mixer soln (map fst nextSolns)
+
 
 -- Gelatin concentration %
 -- Molar concentrations of silver halides
@@ -91,15 +95,18 @@ analyzeRecipe soln STOP = do
 analyzeRecipe soln (TEMPERATURE newTemp) = do
   tell $ unlines [ unwords ["SET TEMPERATURE TO", prettyTemperature newTemp] ]
   return soln {temp = newTemp}
-analyzeRecipe soln (REST time) = do
-  tell $ unlines [ unwords ["REST FOR", show time, "MINUTES"] ]
-  return soln {resting = time}
+analyzeRecipe soln (REST minutes) = do
+  tell $ unlines [ unwords ["REST FOR", show minutes, "MINUTES"] ]
+  return soln {currentlyResting = minutes}
 analyzeRecipe soln WASH = do
   tell "Washed (I don't know how to analyze this yet.)"
   return soln
-analyzeRecipe soln (ADDITION nextSolns _) = do
-  tell $ unlines (["ADD TO SOLUTION:"] ++ map prettySolution nextSolns)
-  return $ foldl mixer soln nextSolns
+analyzeRecipe soln (ADDITION nextSolns) = do
+  tell $ unlines (["ADD TO SOLUTION:"] ++ do
+      t <- nextSolns
+      [prettySolution (fst t), "--At " ++ prettyRate (snd t)]
+    )
+  return $ foldl mixer soln (map fst nextSolns)
 
 -- CHEMICAL REACTIONS
 
@@ -112,7 +119,7 @@ mixer soln newSoln = SOLUTION {
   other = other soln ++ other newSoln,
   water = water soln + water newSoln,
   temp = if temp soln == temp newSoln then temp soln else Nothing,
-  resting = 0.0
+  currentlyResting = 0.0
 } where newSalts = sort $ mergeSalts $ salts soln ++ salts newSoln
         newAgnox = SILVERNITRATE $ Just (grams (agnox soln) + grams (agnox newSoln) )
         reaction = saltsToHalides (newAgnox, newSalts) 
