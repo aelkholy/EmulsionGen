@@ -4,10 +4,12 @@ module Ingredients.SilverHalide (
   SilverHalide(..), mergeHalides
 ) where
 
+-- Away
 import GHC.Generics
 import Data.Maybe
-import Control.Monad      (foldM)
-import Ingredients.Basics (Chemical(..))
+import Control.Monad          (foldM)
+-- Home Team
+import Ingredients.Ingredient (Chemical(..))
 
 data SilverHalide = AgI { amountMoles :: Double }
   | AgBr { amountMoles :: Double }

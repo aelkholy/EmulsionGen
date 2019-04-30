@@ -5,7 +5,8 @@ module Ingredients.SilverNitrate (
 
 import GHC.Generics
 import Data.Maybe
-import Ingredients.Basics (Chemical(..))
+-- Home team
+import Ingredients.Ingredient (Chemical(..))
 
 newtype SilverNitrate = SILVERNITRATE {gramAmount :: Maybe Double} deriving (Generic, Show)
 

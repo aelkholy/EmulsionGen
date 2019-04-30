@@ -1,12 +1,14 @@
 {-# LANGUAGE DeriveGeneric #-}
 module Ingredients.Salt (
-  Salt(..), mergeSalts, mergeSalt, prettySalt
+  Salt(..),
+  mergeSalts, mergeSalt, prettySalt
 ) where
 
 import GHC.Generics
 import Data.Maybe (catMaybes)
 import Control.Monad
-import Ingredients.Basics (Chemical(..))
+-- Home team
+import Ingredients.Ingredient (Chemical(..))
 
 data Salt = KI {amount :: Double}
   | KBr {amount :: Double}

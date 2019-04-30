@@ -1,6 +1,10 @@
 # EmulsionGen #
 ## Description ##
-EmulsionGen is an assistive tool for the analysis and making of photographic, silver gelatin based emulsions.
+EmulsionGen is an assistive tool for the analysis and making of photographic, silver gelatin based emulsions. Its main use cases are:
+- Analyze and compare emulsions 
+  - Infer expected properties of emulsion (Reasoning)
+  - Check 'correctness' of emulsion (Solver)
+- Generate emulsions with desired properties (Solver)
 
 ## Getting Started ##
 ### Prerequisites ###

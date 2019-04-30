@@ -1,10 +1,9 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE LambdaCase #-}
-module SilverGelatin (
-  Solution(..), Step(..),
-  foldEmulsion, followRecipe, Mix, 
+module Emulsion (
+  Solution(..), Step(..), Mix,
+  foldEmulsion, followRecipe, 
   saltReaction
-  -- withLogging, MixIO, runEmulsion
   ) where
 
 -- Hackage
@@ -14,7 +13,8 @@ import Data.List                    (sort, unfoldr)
 import Control.Monad.Writer
 import Data.Maybe
 -- Homies
-import Ingredients.Basics           (Time, Temperature, Rate, Chemical(..), prettyTemperature)
+import Physics                      (Time, Temperature, Rate, prettyTemperature)
+import Ingredients.Ingredient       (Chemical(..))
 import Ingredients.SilverNitrate    (SilverNitrate(..), prettyNitrate)
 import Ingredients.SilverHalide     (SilverHalide(..), mergeHalides)
 import Ingredients.Salt             (Salt(..), mergeSalts, prettySalt)
@@ -42,12 +42,13 @@ data Solution = SOLUTION {
 
 prettySolution :: Solution -> String
 prettySolution s = str
-    where str = unwords [ingredients, others]
+    where str = "\t" ++ unwords [ingredients, others]
           ingredients = unlines $ map prettySalt (salts s) ++ [prettyNitrate $ agnox s] ++ map prettyChemical (other s)
           others = unwords $ ["-In", show $ water s,"milliliters of water"] ++ [prettyTemperature $ temp s]
 
+-- Maybe factor out step
 data Step = TEMPERATURE {temperature :: Temperature}
- | ADDITION {solution :: Solution, rate :: Rate}
+ | ADDITION {solutions :: [Solution], rate :: Rate}
  | REST {time :: Double}
  | WASH
  | STOP deriving (Generic, Show)
@@ -72,9 +73,9 @@ followRecipe soln (REST time) = do
 followRecipe soln WASH = do
     tell "WASH EMULSION"
     return soln
-followRecipe soln (ADDITION nextSoln _) = do
-  tell $ unlines ["ADD TO SOLUTION:", prettySolution nextSoln]
-  return $ mixer soln nextSoln
+followRecipe soln (ADDITION nextSolns _) = do
+  tell $ unlines (["ADD TO SOLUTION:"] ++ map prettySolution nextSolns)
+  return $ foldl mixer soln nextSolns
 
 -- Gelatin concentration %
 -- Molar concentrations of silver halides
@@ -82,6 +83,7 @@ followRecipe soln (ADDITION nextSoln _) = do
 -- % Silver reacted
 -- Temperature / time
 -- in consideration of phases
+-- Guess coating power and amt silver per sq
 analyzeRecipe :: Solution -> Step -> Writer String Solution
 analyzeRecipe soln STOP = do
   tell ""
@@ -95,9 +97,9 @@ analyzeRecipe soln (REST time) = do
 analyzeRecipe soln WASH = do
   tell "Washed (I don't know how to analyze this yet.)"
   return soln
-analyzeRecipe soln (ADDITION nextSoln _) = do
-  tell $ unlines ["ADD TO SOLUTION:", prettySolution nextSoln]
-  return $ mixer soln nextSoln
+analyzeRecipe soln (ADDITION nextSolns _) = do
+  tell $ unlines (["ADD TO SOLUTION:"] ++ map prettySolution nextSolns)
+  return $ foldl mixer soln nextSolns
 
 -- CHEMICAL REACTIONS
 

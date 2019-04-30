@@ -3,8 +3,8 @@ module FileLoader (
     ) where
 
 -- Home team
-import SilverGelatin
-import Ingredients.Basics                   (Time, Temperature, Rate, Unit)
+import Emulsion
+import Physics                              (Time, Temperature, Rate, Unit)
 import Ingredients.SilverNitrate            (SilverNitrate)
 import Ingredients.SilverHalide             (SilverHalide)
 import Ingredients.Salt                     (Salt)
