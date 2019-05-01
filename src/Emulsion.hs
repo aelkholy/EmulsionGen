@@ -31,22 +31,25 @@ mergePH (Just phOne) Nothing = Just phOne
 
 data Solution = SOLUTION {
   salts :: [Salt],
-  agnox :: SilverNitrate,
+  silverNitrate :: SilverNitrate,
   other :: [ChemicalModifier],
-  agH :: [SilverHalide],
-  ph :: Maybe Ph,
   water :: Double,
   temp :: Temperature,
-  currentlyResting :: Minute
+  currentlyResting :: Minute,
+  ph :: Maybe Ph,
+  agH :: [SilverHalide]
 } deriving (Generic, Show)
 
 prettySolution :: Solution -> String
 prettySolution s = str
-    where str = ingredients ++ others
-          ingredients = unlines ( map ("-" ++) (map prettySalt (salts s) ++ [prettyNitrate $ agnox s] ++ map prettyChemical (other s)) )
-          others = unwords $ ["--In", show $ water s,"milliliters of water"] ++ [prettyTemperature $ temp s]
+    where str = unlines ( map ("-" ++) chemicals ) ++ waterAmt
+          saltStrings = map prettySalt (salts s)
+          nitrateStrings = [prettyNitrate $ silverNitrate s]
+          extras = map prettyChemical (other s)
+          chemicals = filter (not . null) (saltStrings ++ nitrateStrings ++ extras)
+          waterAmt = unwords $ ["--In", show $ water s, "milliliters of water"] ++ ["@"] ++ [prettyTemperature $ temp s]
 
--- Maybe factor out step
+
 data Step = TEMPERATURE {temperature :: Temperature}
  | ADDITION {solutions :: [(Solution, Rate)]}
  | REST {minutes :: Double}
@@ -80,6 +83,49 @@ followRecipe soln (ADDITION nextSolns) = do
     )
   return $ foldl mixer soln (map fst nextSolns)
 
+-- CHEMICAL REACTIONS
+
+mixer :: Solution -> Solution -> Solution
+mixer soln newSoln = SOLUTION {
+  salts = saltReaction newsilverNitrate newSalts,
+  silverNitrate = leftoverNitrate,
+  agH = mergeHalides previousHalides reactedHalides,
+  ph = newPh,
+  other = other soln ++ other newSoln,
+  water = water soln + water newSoln,
+  temp = if temp soln == temp newSoln then temp soln else Nothing,
+  currentlyResting = 0.0
+} where newSalts = sort $ mergeSalts $ salts soln ++ salts newSoln
+        newsilverNitrate = SILVERNITRATE $ Just (grams (silverNitrate soln) + grams (silverNitrate newSoln) )
+        reaction = saltsToHalides (newsilverNitrate, newSalts) 
+        reactedNitrate = map fst reaction
+        leftoverNitrate = if not (null reactedNitrate) then last reactedNitrate else SILVERNITRATE $ Just 0.0
+        reactedHalides = map snd reaction
+        previousHalides = mergeHalides (agH soln) (agH newSoln)
+        newPh = mergePH (ph soln) (ph newSoln)
+
+saltsToHalides :: (SilverNitrate, [Salt]) -> [(SilverNitrate, SilverHalide)]
+saltsToHalides (sn, ss) = unfoldr reactor (sn, ss)
+
+reactor :: (SilverNitrate, [Salt]) -> Maybe ((SilverNitrate, SilverHalide), (SilverNitrate, [Salt]))
+reactor (nitrate, []) = Nothing
+reactor (nitrate, s:alts) = Just((nitrate, newHalide s), (newNitrate, alts))
+  where newNitrate = SILVERNITRATE $ Just $ reactForLeftoverA nitrate s
+        newHalide = \case
+          a@(KI amt) -> AgI $ reactForAmountB nitrate a
+          a@(KBr amt) -> AgBr $ reactForAmountB nitrate a
+          a@(NaCl amt) -> AgCl $ reactForAmountB nitrate a
+
+saltReaction :: SilverNitrate -> [Salt] -> [Salt]
+saltReaction nitrate [] = []
+saltReaction nitrate (x:xs) = leftoverSalt : saltReaction leftoverNitrate xs
+  where leftoverSalt = case x of 
+          a@(KI amt) -> KI $ reactForLeftoverA a nitrate
+          a@(KBr amt) -> KBr $ reactForLeftoverA a nitrate
+          a@(NaCl amt) -> NaCl $ reactForLeftoverA a nitrate
+        leftoverNitrate = SILVERNITRATE $ Just (reactForLeftoverA nitrate x)
+
+-- Analysis
 
 -- Gelatin concentration %
 -- Molar concentrations of silver halides
@@ -108,44 +154,5 @@ analyzeRecipe soln (ADDITION nextSolns) = do
     )
   return $ foldl mixer soln (map fst nextSolns)
 
--- CHEMICAL REACTIONS
 
-mixer :: Solution -> Solution -> Solution
-mixer soln newSoln = SOLUTION {
-  salts = saltReaction newAgnox newSalts,
-  agnox = leftoverNitrate,
-  agH = mergeHalides previousHalides reactedHalides,
-  ph = newPh,
-  other = other soln ++ other newSoln,
-  water = water soln + water newSoln,
-  temp = if temp soln == temp newSoln then temp soln else Nothing,
-  currentlyResting = 0.0
-} where newSalts = sort $ mergeSalts $ salts soln ++ salts newSoln
-        newAgnox = SILVERNITRATE $ Just (grams (agnox soln) + grams (agnox newSoln) )
-        reaction = saltsToHalides (newAgnox, newSalts) 
-        reactedNitrate = map fst reaction
-        leftoverNitrate = if not (null reactedNitrate) then last reactedNitrate else SILVERNITRATE $ Just 0.0
-        reactedHalides = map snd reaction
-        previousHalides = mergeHalides (agH soln) (agH newSoln)
-        newPh = mergePH (ph soln) (ph newSoln)
-
-saltsToHalides :: (SilverNitrate, [Salt]) -> [(SilverNitrate, SilverHalide)]
-saltsToHalides (sn, ss) = unfoldr reactor (sn, ss)
-
-reactor :: (SilverNitrate, [Salt]) -> Maybe ((SilverNitrate, SilverHalide), (SilverNitrate, [Salt]))
-reactor (nitrate, []) = Nothing
-reactor (nitrate, s:alts) = Just((nitrate, newHalide s), (newNitrate, alts))
-  where newNitrate = SILVERNITRATE $ Just $ reactForLeftoverA nitrate s
-        newHalide = \case
-          a@(KI amt) -> AgI $ reactForAmountB nitrate a
-          a@(KBr amt) -> AgBr $ reactForAmountB nitrate a
-          a@(NaCl amt) -> AgCl $ reactForAmountB nitrate a
-
-saltReaction :: SilverNitrate -> [Salt] -> [Salt]
-saltReaction nitrate [] = []
-saltReaction nitrate (x:xs) = leftoverSalt : saltReaction leftoverNitrate xs
-  where leftoverSalt = case x of 
-          a@(KI amt) -> KI $ reactForLeftoverA a nitrate
-          a@(KBr amt) -> KBr $ reactForLeftoverA a nitrate
-          a@(NaCl amt) -> NaCl $ reactForLeftoverA a nitrate
-        leftoverNitrate = SILVERNITRATE $ Just (reactForLeftoverA nitrate x)
+-- ratioGelatinWater :: 

@@ -1,7 +1,7 @@
 [
   {
       "salts": [],
-      "agnox": {},
+      "silverNitrate": {},
       "agH": [],
       "ph": {
           "name": "HCl",
@@ -33,7 +33,7 @@
       "solutions": [
         [{
         "salts": [],
-        "agnox": {
+        "silverNitrate": {
             "gramAmount": 20.0
         },
         "agH": [],
@@ -64,7 +64,7 @@
                 "amount": 7
               }
             ],
-            "agnox":{},
+            "silverNitrate":{},
             "agH": [],
             "ph": null,
             "other": [
@@ -97,7 +97,7 @@
             "amount": 0.12
           }
         ],
-        "agnox":{},
+        "silverNitrate":{},
         "agH": [],
         "ph": null,
         "other": [],
@@ -126,7 +126,7 @@
         [
           {
             "salts": [],
-            "agnox": {},
+            "silverNitrate": {},
             "agH": [],
             "ph": null,
             "other": [
@@ -154,7 +154,7 @@
         [
           {
             "salts": [],
-            "agnox": {
+            "silverNitrate": {
                 "gramAmount": 3.0
             },
             "agH": [],
