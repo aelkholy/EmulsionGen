@@ -51,6 +51,9 @@ For a complete list of options, consult the program's help command:
 $ stack exec -- simple-sat --help
 ``` -->
 
+## Project TODOs ##
+Cleanup inputs in the data JSON files. E.g. the user shouldn't have to specify the silver halides for each step in a solution, and there should be more optional arguments.
+
 # Contributing #
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of
 conduct, and the process for submitting pull requests to us.

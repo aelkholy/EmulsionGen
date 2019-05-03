@@ -3,7 +3,7 @@
 module Emulsion (
   Solution(..), Step(..), Mix,
   foldEmulsion, followRecipe, 
-  saltReaction
+  saltReaction, analyzeRecipe
   ) where
 
 -- Hackage
@@ -33,6 +33,7 @@ data Solution = SOLUTION {
   salts :: [Salt],
   silverNitrate :: SilverNitrate,
   other :: [ChemicalModifier],
+  gramsGelatin :: Maybe Double,
   water :: Double,
   temp :: Temperature,
   currentlyResting :: Minute,
@@ -45,9 +46,10 @@ prettySolution s = str
     where str = unlines ( map ("-" ++) chemicals ) ++ waterAmt
           saltStrings = map prettySalt (salts s)
           nitrateStrings = [prettyNitrate $ silverNitrate s]
+          gelatinString = unwords $ fromMaybe [] $ sequence [Just "Gelatin", fmap show (gramsGelatin s), Just "grams"]
           extras = map prettyChemical (other s)
-          chemicals = filter (not . null) (saltStrings ++ nitrateStrings ++ extras)
-          waterAmt = unwords $ ["--In", show $ water s, "milliliters of water"] ++ ["@"] ++ [prettyTemperature $ temp s]
+          chemicals = filter (not . null) (saltStrings ++ nitrateStrings ++ [gelatinString] ++ extras)
+          waterAmt = unwords $ ["--In", show $ water s, "milliliters of water"] ++ [prettyTemperature $ temp s]
 
 
 data Step = TEMPERATURE {temperature :: Temperature}
@@ -89,6 +91,7 @@ mixer :: Solution -> Solution -> Solution
 mixer soln newSoln = SOLUTION {
   salts = saltReaction newsilverNitrate newSalts,
   silverNitrate = leftoverNitrate,
+  gramsGelatin = Just $ fromMaybe 0.0 (gramsGelatin soln) + fromMaybe 0.0 (gramsGelatin newSoln),
   agH = mergeHalides previousHalides reactedHalides,
   ph = newPh,
   other = other soln ++ other newSoln,
@@ -136,7 +139,10 @@ saltReaction nitrate (x:xs) = leftoverSalt : saltReaction leftoverNitrate xs
 -- Guess coating power and amt silver per sq
 analyzeRecipe :: Solution -> Step -> Writer String Solution
 analyzeRecipe soln STOP = do
-  tell ""
+  -- tell $ unlines [
+  --   show $ ratioGelatinWater soln
+  --   ]
+  tell $ prettySolution soln
   return soln
 analyzeRecipe soln (TEMPERATURE newTemp) = do
   tell $ unlines [ unwords ["SET TEMPERATURE TO", prettyTemperature newTemp] ]
@@ -155,4 +161,7 @@ analyzeRecipe soln (ADDITION nextSolns) = do
   return $ foldl mixer soln (map fst nextSolns)
 
 
--- ratioGelatinWater :: 
+ratioGelatinWater :: Solution -> Double
+ratioGelatinWater sol = gelatin / diHydrogenMonoxide where
+  gelatin = fromMaybe 0.0 (gramsGelatin sol)
+  diHydrogenMonoxide = water sol

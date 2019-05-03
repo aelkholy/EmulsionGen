@@ -2,7 +2,8 @@
   {
       "salts": [],
       "silverNitrate": {},
-      "agH": [],
+      "gramsGelatin": 20,
+      "agH":[],
       "ph": {
           "name": "HCl",
           "amount": 2.0,
