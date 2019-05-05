@@ -35,7 +35,7 @@ data Solution = SOLUTION {
   other :: [ChemicalModifier],
   gramsGelatin :: Maybe Double,
   water :: Double,
-  temp :: Temperature,
+  celsius :: Temperature,
   currentlyResting :: Minute,
   ph :: Maybe Ph,
   agH :: [SilverHalide]
@@ -49,7 +49,7 @@ prettySolution s = str
           gelatinString = unwords $ fromMaybe [] $ sequence [Just "Gelatin", fmap show (gramsGelatin s), Just "grams"]
           extras = map prettyChemical (other s)
           chemicals = filter (not . null) (saltStrings ++ nitrateStrings ++ [gelatinString] ++ extras)
-          waterAmt = unwords $ ["--In", show $ water s, "milliliters of water"] ++ [prettyTemperature $ temp s]
+          waterAmt = unwords $ ["--In", show $ water s, "milliliters of water"] ++ [prettyTemperature $ celsius s]
 
 
 data Step = TEMPERATURE {temperature :: Temperature}
@@ -71,7 +71,7 @@ followRecipe soln STOP = do
   return soln
 followRecipe soln (TEMPERATURE newTemp) = do
   tell $ unlines [ unwords ["SET TEMPERATURE TO", prettyTemperature newTemp] ]
-  return soln {temp = newTemp}
+  return soln {celsius = newTemp}
 followRecipe soln (REST minutes) = do
   tell $ unlines [ unwords ["REST FOR", show minutes, "MINUTES"] ]
   return soln {currentlyResting = minutes}
@@ -96,7 +96,7 @@ mixer soln newSoln = SOLUTION {
   ph = newPh,
   other = other soln ++ other newSoln,
   water = water soln + water newSoln,
-  temp = if temp soln == temp newSoln then temp soln else Nothing,
+  celsius = if celsius soln == celsius newSoln then celsius soln else Nothing,
   currentlyResting = 0.0
 } where newSalts = sort $ mergeSalts $ salts soln ++ salts newSoln
         newsilverNitrate = SILVERNITRATE $ Just (grams (silverNitrate soln) + grams (silverNitrate newSoln) )
@@ -146,7 +146,7 @@ analyzeRecipe soln STOP = do
   return soln
 analyzeRecipe soln (TEMPERATURE newTemp) = do
   tell $ unlines [ unwords ["SET TEMPERATURE TO", prettyTemperature newTemp] ]
-  return soln {temp = newTemp}
+  return soln {celsius = newTemp}
 analyzeRecipe soln (REST minutes) = do
   tell $ unlines [ unwords ["REST FOR", show minutes, "MINUTES"] ]
   return soln {currentlyResting = minutes}

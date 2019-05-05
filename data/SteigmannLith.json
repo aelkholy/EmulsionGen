@@ -3,7 +3,6 @@
       "salts": [],
       "silverNitrate": {},
       "gramsGelatin": 20,
-      "agH":[],
       "ph": {
           "name": "HCl",
           "amount": 2.0,
@@ -25,7 +24,7 @@
           }
         ],
       "water": 425.0,
-      "temp": 55.0,
+      "celsius": 55.0,
       "currentlyResting": 0.0
   },
   [
@@ -37,11 +36,10 @@
         "silverNitrate": {
             "gramAmount": 20.0
         },
-        "agH": [],
         "ph": null,
         "other": [],
         "water": 100.0,
-        "temp": 55.0,
+        "celsius": 55.0,
         "currentlyResting": 0.0
       },
       {
@@ -66,7 +64,6 @@
               }
             ],
             "silverNitrate":{},
-            "agH": [],
             "ph": null,
             "other": [
               {
@@ -77,7 +74,7 @@
               }
             ],
             "water": 40.0,
-            "temp": 55.0,
+            "celsius": 55.0,
             "currentlyResting": 0.0
           },
           {
@@ -99,11 +96,10 @@
           }
         ],
         "silverNitrate":{},
-        "agH": [],
         "ph": null,
         "other": [],
         "water": 12.0,
-        "temp": null,
+        "celsius": null,
         "currentlyResting": 0.0
       },
       {
@@ -115,7 +111,7 @@
     },
     {
       "tag": "TEMPERATURE",
-      "temperature": 60.0
+      "celsiuserature": 60.0
     },
     {
       "tag": "REST",
@@ -128,7 +124,6 @@
           {
             "salts": [],
             "silverNitrate": {},
-            "agH": [],
             "ph": null,
             "other": [
               {
@@ -139,7 +134,7 @@
               }
             ],
             "water": 12.0,
-            "temp": null,
+            "celsius": null,
             "currentlyResting": 0.0
           },
           {
@@ -158,11 +153,10 @@
             "silverNitrate": {
                 "gramAmount": 3.0
             },
-            "agH": [],
             "ph": null,
             "other": [],
             "water": 30.0,
-            "temp": null,
+            "celsius": null,
             "currentlyResting": 0.0
           },
           {
