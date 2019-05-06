@@ -27,14 +27,15 @@ $ stack build
 ```
 
 ### Running the tests ###
-You can run the unit tests from the command line using the following commands:
+Code changing too much to worry about tests for now.
+<!-- You can run the unit tests from the command line using the following commands:
 ```bash
 $ stack test
 ```
 
 The unit-tests can be invoked with options that fine tune the test behavior. For a complete list of testing options, you can invoke the following:
 ```bash
-$ stack test --test-arguments "--help"
+$ stack test --test-arguments "--help" -->
 ```
 
 ## Example usage
