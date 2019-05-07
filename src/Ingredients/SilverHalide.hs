@@ -1,7 +1,8 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE LambdaCase #-}
 module Ingredients.SilverHalide (
-  SilverHalide(..), mergeHalides
+  SilverHalide(..), mergeHalides,
+  prettyHalides, prettyHalideRatio
 ) where
 
 -- Away
@@ -34,9 +35,8 @@ mergeHalide (AgBr x) (AgBr y) = Just AgBr{amountMoles = x + y}
 mergeHalide (AgCl x) (AgCl y) = Just AgCl{amountMoles = x + y}
 mergeHalide _ _ = Nothing
 
-mergeHalides :: [SilverHalide] -> [SilverHalide] -> [SilverHalide]
-mergeHalides ones twos = let
-  comb = ones ++ twos
+mergeHalides :: [SilverHalide] -> [SilverHalide]
+mergeHalides comb = let
   ai = [ x | x@(AgI _) <- comb ]
   abr = [ x | x@(AgBr _) <- comb ]
   acl = [ x | x@(AgCl _) <- comb ]
@@ -44,3 +44,20 @@ mergeHalides ones twos = let
   abr_merged = if length abr > 1 then foldM mergeHalide (AgBr{amountMoles=0.0}) abr else if length abr == 1 then Just $ head abr else Nothing
   acl_merged = if length acl > 1 then foldM mergeHalide (AgCl{amountMoles=0.0}) acl else if length acl == 1 then Just $ head acl else Nothing
   in catMaybes (ai_merged : abr_merged : acl_merged : [])
+
+prettyHalide :: SilverHalide -> String
+prettyHalide (AgI x) = unwords ["Silver Iodide:", show x, "moles"]
+prettyHalide (AgBr x) = unwords ["Silver Bromine:", show x, "moles"]
+prettyHalide (AgCl x) = unwords ["Silver Chloride:", show x, "moles"]
+
+prettyHalides :: Maybe [SilverHalide] -> Maybe [String]
+prettyHalides Nothing = Nothing
+prettyHalides l@(Just shl) = Just $ map prettyHalide shl
+
+halideRatio :: SilverHalide -> [SilverHalide] -> Double
+halideRatio a b = moles a / sum ( map moles b )
+
+prettyHalideRatio :: SilverHalide -> [SilverHalide] -> String
+prettyHalideRatio h@(AgI x) listhalide = unwords ["Silver Iodide:", show $ 100 * halideRatio h listhalide, "%"]
+prettyHalideRatio h@(AgBr x) listhalide = unwords ["Silver Bromine:", show $ 100 * halideRatio h listhalide, "%"]
+prettyHalideRatio h@(AgCl x) listhalide = unwords ["Silver Chloride:", show $ 100 * halideRatio h listhalide, "%"]

@@ -4,8 +4,8 @@ module Stages.Digestion (
 
 -- Hackage
 -- Homies
-import Emulsion
+import Solution
 import Physics                      (Temperature, Minute)
 import Ingredients.ChemicalModifier  (ChemicalModifier)
 
-data Digestion = DIGESTION {restingMinutes :: Minute, temperature :: Temperature, additives :: Maybe [ChemicalModifier]}
+data Digestion = DIGESTION {duration :: Minute, temperature :: Temperature, finals :: [ChemicalModifier]}

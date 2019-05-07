@@ -3,12 +3,12 @@ module FileLoader (
     ) where
 
 -- Home team
-import Emulsion
+import Solution
 import Physics                              (Rate, Unit)
 import Ingredients.SilverNitrate            (SilverNitrate)
 import Ingredients.SilverHalide             (SilverHalide)
 import Ingredients.Salt                     (Salt)
-import Ingredients.ChemicalModifier         (ChemicalModifier)
+import Ingredients.ChemicalModifier          (ChemicalModifier)
 -- FROM STACKAGE
 import Data.Aeson                           ( FromJSON, ToJSON, eitherDecode )
 import Data.Aeson.Types                     ( Parser )

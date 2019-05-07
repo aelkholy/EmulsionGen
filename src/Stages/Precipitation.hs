@@ -4,9 +4,10 @@ module Stages.Precipitation (
 
 -- Hackage
 -- Homies
-import Emulsion
-import Physics           (Rate, Temperature, Minute)
+import qualified Solution as S
+import Physics           (Rate(..), Temperature, Minute)
 
-data Precipitation = SINGLEJET { saltSolution :: Solution, nitrateSolution :: Solution, rate :: Rate, restingMinutes :: Maybe Minute, temperature :: Maybe Temperature}
-  | DOUBLEJET { saltSolution :: Solution, nitrateSolution :: Solution, saltRate :: Rate, nitrateRate :: Rate, restingMinutes :: Maybe Minute, temperature :: Maybe Temperature}
-  | REVERSE { saltSolution :: Solution, nitrateSolution :: Solution, rate :: Rate, restingMinutes :: Maybe Minute, temperature :: Maybe Temperature}
+data Precipitation = SINGLEJET {duration :: Minute, temperature :: Temperature}
+  | DOUBLEJET {duration :: Minute, temperature :: Temperature}
+  | REVERSE {duration :: Minute, temperature :: Temperature} deriving (Show)
+

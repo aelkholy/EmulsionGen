@@ -9,7 +9,7 @@ import qualified Test.Tasty.SmallCheck    as SC
 import qualified Ingredients.Salt         as IS
 import qualified Ingredients.SilverHalide as ISH
 import Ingredients.SilverNitrate
-import Emulsion                     (silverReaction, halideReaction, saltReaction)
+import Solution                          (silverReaction, halideReaction, saltReaction)
 import Ingredients.Basics                (Second, Temperature, Rate, Chemical(..))
 
 
