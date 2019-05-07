@@ -88,8 +88,16 @@ followRecipe soln (ADDITION nextSolns) = do
 
 -- CHEMICAL REACTIONS
 
-mixer :: Solution -> Solution -> Solution
-mixer soln newSoln = SOLUTION {
+mixer :: Solution -> Step -> Solution
+mixer soln (TEMPERATURE t) = soln {temperature = Just t}
+mixer soln (REST t) = soln {temperature = Just t}
+mixer soln WASH = soln
+mixer soln STOP = soln
+mixer soln (ADDITION x:xs) = newSoln 
+    where newSoln = foldl ((singleAddition soln (fst x)) {rate = snd x}) x xs
+
+singleAddition :: Solution -> Solution -> Solution
+singleAddition soln newSoln = SOLUTION {
   salts = saltReaction newsilverNitrate newSalts,
   silverNitrate = leftoverNitrate,
   gramsGelatin = Just $ fromMaybe 0.0 (gramsGelatin soln) + fromMaybe 0.0 (gramsGelatin newSoln),
