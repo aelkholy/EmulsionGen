@@ -53,7 +53,7 @@ prettySolution s = str
           halides = fromMaybe [] $ (++) <$> (Just ["(=== Has AgH:)"]) <*> (prettyHalides (agH s))
 
 
-data Step = TEMPERATURE {temperature :: Temperature}
+data Step = TEMPERATURE {newCelsius :: Temperature}
  | ADDITION {solutions :: [(Solution, Rate)]}
  | REST {minutes :: Double}
  | WASH
@@ -79,22 +79,24 @@ followRecipe soln (REST minutes) = do
 followRecipe soln WASH = do
     tell "WASH EMULSION"
     return soln
-followRecipe soln (ADDITION nextSolns) = do
+followRecipe soln a@(ADDITION nextSolns) = do
   tell $ unlines (["ADD TO SOLUTION:"] ++ do
       t <- nextSolns
       [prettySolution (fst t), "--At " ++ prettyRate (snd t)]
     )
-  return $ foldl mixer soln (map fst nextSolns)
+  return $ mixer soln a
 
 -- CHEMICAL REACTIONS
 
 mixer :: Solution -> Step -> Solution
-mixer soln (TEMPERATURE t) = soln {temperature = Just t}
-mixer soln (REST t) = soln {temperature = Just t}
+mixer soln (TEMPERATURE t) = soln {celsius = t}
+mixer soln (REST t) = soln {currentlyResting = t}
 mixer soln WASH = soln
 mixer soln STOP = soln
-mixer soln (ADDITION x:xs) = newSoln 
-    where newSoln = foldl ((singleAddition soln (fst x)) {rate = snd x}) x xs
+mixer soln (ADDITION sols) = foldl singleAddition x xs
+    where x = fst $ head sols
+          xs = map fst $ tail sols
+    
 
 singleAddition :: Solution -> Solution -> Solution
 singleAddition soln newSoln = SOLUTION {
@@ -173,12 +175,12 @@ analyzeRecipe soln (REST minutes) = do
 analyzeRecipe soln WASH = do
   tell "Washed"
   return soln
-analyzeRecipe soln (ADDITION nextSolns) = do
+analyzeRecipe soln a@(ADDITION nextSolns) = do
   tell $ unlines (["ADD TO SOLUTION:"] ++ do
       t <- nextSolns
       [prettySolution (fst t), "--At " ++ prettyRate (snd t)]
     )
-  return $ foldl mixer soln (map fst nextSolns)
+  return $ mixer soln a
 
 ratioGelatinWater :: Solution -> Double
 ratioGelatinWater sol = gelatin / diHydrogenMonoxide where

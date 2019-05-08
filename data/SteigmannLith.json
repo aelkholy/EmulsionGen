@@ -111,7 +111,7 @@
     },
     {
       "tag": "TEMPERATURE",
-      "celsiuserature": 60.0
+      "newCelsius": 60.0
     },
     {
       "tag": "REST",
