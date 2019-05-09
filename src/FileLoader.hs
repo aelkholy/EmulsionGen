@@ -55,5 +55,5 @@ instance ToJSON Step
 decoder :: B.ByteString -> Either String (Writer String Solution)
 decoder arg = do
         raw <- inputs
-        Right $ foldEmulsion (followRecipe) (fst raw) (snd raw)
+        Right $ foldRecipe (followRecipe) (fst raw) (snd raw)
         where inputs = eitherDecode arg :: Either String (Solution, [Step])

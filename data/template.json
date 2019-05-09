@@ -4,7 +4,7 @@
       "silverNitrate": {},
       "gramsGelatin": 0,
       "ph": null,
-      "other": [],
+      "otherChemicals": [],
       "water": 0.0,
       "celsius": 0.0,
       "currentlyResting": 0.0
@@ -19,7 +19,7 @@
             "silverNitrate": {},
             "gramsGelatin": 0,
             "ph": null,
-            "other": [],
+            "otherChemicals": [],
             "water": 0.0,
             "celsius": 0.0,
             "currentlyResting": 0.0

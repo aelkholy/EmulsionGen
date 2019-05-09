@@ -12,7 +12,7 @@ import Data.Data
 type Second = Double
 type Minute = Double
 type Temperature = Maybe Double
-data Unit = GRAM | MILLILITER  deriving (Generic, Show, Typeable, Data)
+data Unit = GRAM | MILLILITER  deriving (Generic, Show, Typeable, Data, Eq)
 data Rate = RATE { amountAdded :: Double, overSeconds :: Second } deriving (Generic, Show) -- percent / over time minutes
 
 prettyUnit :: Unit -> String

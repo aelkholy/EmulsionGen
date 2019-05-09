@@ -16,8 +16,8 @@ This project is written in [Haskell](https://docs.haskellstack.org/en/stable/REA
 For installing this project, first clone this repository,
 
 ```bash
-$ git clone git@github.com:dlewissandy/simple-sat.git
-$ cd simple-sat
+$ git clone git@github.com:aelkholy/EmulsionGen.git
+$ cd EmulsionGen
 ```
 
 At this point, the only thing left to do is to build it using stack,
@@ -35,14 +35,17 @@ $ stack test
 
 The unit-tests can be invoked with options that fine tune the test behavior. For a complete list of testing options, you can invoke the following:
 ```bash
-$ stack test --test-arguments "--help" -->
+$ stack test --test-arguments "--help"
 ```
+ -->
 
 ## Example usage
 
-## Project TODOs ##
-Cleanup inputs in the data JSON files. E.g. the user shouldn't have to specify the silver halides for each step in a solution, and there should be more optional arguments.
+```bash
+$ stack exec EmulsionGen data/MowreyBrovira.json
+```
 
+## Project TODOs ##
 Better handling of pH
 
 Multiple command line arguments

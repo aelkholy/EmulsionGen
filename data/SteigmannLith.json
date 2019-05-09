@@ -1,7 +1,5 @@
 [
   {
-      "salts": [],
-      "silverNitrate": {},
       "gramsGelatin": 20,
       "ph": {
           "name": "HCl",
@@ -9,7 +7,7 @@
           "unit": "MILLILITER",
           "conc": 0.37
         },
-      "other": [
+      "otherChemicals": [
           {
             "name": "CdCl2*2H2O",
             "amount": 0.7,
@@ -32,15 +30,11 @@
       "tag": "ADDITION",
       "solutions": [
         [{
-        "salts": [],
         "silverNitrate": {
-            "gramAmount": 20.0
+            "gramAmounts": 20.0
         },
-        "ph": null,
-        "other": [],
         "water": 100.0,
-        "celsius": 55.0,
-        "currentlyResting": 0.0
+        "celsius": 55.0
       },
       {
         "amountAdded": 1.0,
@@ -56,16 +50,14 @@
             "salts": [
               {
                 "tag": "KBr",
-                "amount": 1.5
+                "gramAmount": 1.5
               },
               {
                 "tag": "NaCl",
-                "amount": 7
+                "gramAmount": 7
               }
             ],
-            "silverNitrate":{},
-            "ph": null,
-            "other": [
+            "otherChemicals": [
               {
                 "name": "CdCl2*2H2O",
                 "amount": 0.7,
@@ -92,14 +84,10 @@
         "salts": [
           {
             "tag": "KI",
-            "amount": 0.12
+            "gramAmount": 0.12
           }
         ],
-        "silverNitrate":{},
-        "ph": null,
-        "other": [],
         "water": 12.0,
-        "celsius": null,
         "currentlyResting": 0.0
       },
       {
@@ -122,20 +110,14 @@
       "solutions": [
         [
           {
-            "salts": [],
-            "silverNitrate": {},
-            "ph": null,
-            "other": [
+            "otherChemicals": [
               {
                 "name":"Magnesium Oxide",
                 "amount":0.3,
                 "unit":"GRAM",
                 "conc":null
               }
-            ],
-            "water": 12.0,
-            "celsius": null,
-            "currentlyResting": 0.0
+            ]
           },
           {
             "amountAdded": 1.0,
@@ -149,14 +131,10 @@
       "solutions": [
         [
           {
-            "salts": [],
             "silverNitrate": {
-                "gramAmount": 3.0
+                "gramAmounts": 3.0
             },
-            "ph": null,
-            "other": [],
             "water": 30.0,
-            "celsius": null,
             "currentlyResting": 0.0
           },
           {

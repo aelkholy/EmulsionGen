@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 module Ingredients.SilverNitrate (
-  SilverNitrate(..), prettyNitrate
+  SilverNitrate(..), mergeNitrate,
+  prettyNitrate
 ) where
 
 import GHC.Generics
@@ -8,14 +9,18 @@ import Data.Maybe
 -- Home team
 import Ingredients.Ingredient (Chemical(..))
 
-newtype SilverNitrate = SILVERNITRATE {gramAmount :: Maybe Double} deriving (Generic, Show)
+newtype SilverNitrate = SILVERNITRATE {gramAmounts :: Double} deriving (Generic, Show)
 
 -- instance Applicative SilverNitrate where  
 
 instance Chemical SilverNitrate where
   molecularWeight _ = 169.87
-  grams nitrate = fromMaybe 0.0 (gramAmount nitrate)
+  grams = gramAmounts
 
 prettyNitrate :: SilverNitrate -> String
-prettyNitrate (SILVERNITRATE (Just amt)) = unwords ["Silver Nitrate", show amt, "grams"]
-prettyNitrate (SILVERNITRATE Nothing) = ""
+prettyNitrate (SILVERNITRATE amt) = unwords ["Silver Nitrate", show amt, "grams"]
+
+mergeNitrate :: Maybe SilverNitrate -> Maybe SilverNitrate -> SilverNitrate
+mergeNitrate (Just x) Nothing = x
+mergeNitrate Nothing (Just x) = x
+mergeNitrate (Just (SILVERNITRATE one)) (Just(SILVERNITRATE two)) = SILVERNITRATE{gramAmounts=one + two}

@@ -50,9 +50,8 @@ prettyHalide (AgI x) = unwords ["Silver Iodide:", show x, "moles"]
 prettyHalide (AgBr x) = unwords ["Silver Bromine:", show x, "moles"]
 prettyHalide (AgCl x) = unwords ["Silver Chloride:", show x, "moles"]
 
-prettyHalides :: Maybe [SilverHalide] -> Maybe [String]
-prettyHalides Nothing = Nothing
-prettyHalides l@(Just shl) = Just $ map prettyHalide shl
+prettyHalides :: [SilverHalide] -> [String]
+prettyHalides shl = map prettyHalide shl
 
 halideRatio :: SilverHalide -> [SilverHalide] -> Double
 halideRatio a b = moles a / sum ( map moles b )

@@ -1,13 +1,8 @@
 [
   {
-      "salts": [],
-      "silverNitrate": {},
       "gramsGelatin": 10,
-      "ph": null,
-      "other": [],
       "water": 60.0,
-      "celsius": 40.0,
-      "currentlyResting": 0.0
+      "celsius": 40.0
   },
   [
     {
@@ -18,15 +13,9 @@
             "salts": [
               {
                 "tag": "NaBr",
-                "amount": 3.9
+                "gramAmount": 3.9
               }
-            ],
-            "silverNitrate": {},
-            "ph": null,
-            "other": [],
-            "water": 0.0,
-            "celsius": 0.0,
-            "currentlyResting": 0.0
+            ]
           },
           {
             "amountAdded": 1.0,
@@ -44,20 +33,14 @@
       "solutions": [
         [
           {
-            "salts": [],
-            "silverNitrate": {},
-            "ph": null,
-            "other": [
+            "otherChemicals": [
               {
                 "name": "Rhodium Chloride",
                 "amount": 0.09,
                 "unit": "MILLILITER",
                 "conc": 0.1
               }
-            ],
-            "water": 0.0,
-            "celsius": 0.0,
-            "currentlyResting": 0.0
+            ]
           },
           {
             "amountAdded": 1.0,
@@ -71,15 +54,11 @@
       "solutions": [
         [
           {
-            "salts": [],
             "silverNitrate": {
-              "gramAmount": 5.1
+              "gramAmounts": 5.1
             },
-            "ph": null,
-            "other": [],
             "water": 40.0,
-            "celsius": 55.0,
-            "currentlyResting": 0.0
+            "celsius": 55.0
           },
           {
             "amountAdded": 0.25,
