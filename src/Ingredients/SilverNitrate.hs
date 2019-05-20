@@ -21,6 +21,7 @@ prettyNitrate :: SilverNitrate -> String
 prettyNitrate (SILVERNITRATE amt) = unwords ["Silver Nitrate", show amt, "grams"]
 
 mergeNitrate :: Maybe SilverNitrate -> Maybe SilverNitrate -> SilverNitrate
+mergeNitrate Nothing Nothing = SILVERNITRATE{gramAmounts=0.0}
 mergeNitrate (Just x) Nothing = x
 mergeNitrate Nothing (Just x) = x
 mergeNitrate (Just (SILVERNITRATE one)) (Just(SILVERNITRATE two)) = SILVERNITRATE{gramAmounts=one + two}

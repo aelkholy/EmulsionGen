@@ -1,8 +1,10 @@
 module FileLoader (
     decoder
+    ,decoderTwo
     ) where
 
 -- Home team
+import Emulsion
 import Solution
 import Physics                              (Rate, Unit)
 import Ingredients.SilverNitrate            (SilverNitrate)
@@ -52,8 +54,19 @@ instance ToJSON Solution
 instance FromJSON Step
 instance ToJSON Step
 
+instance FromJSON Pour
+instance ToJSON Pour
+
 decoder :: B.ByteString -> Either String (Writer String Solution)
 decoder arg = do
         raw <- inputs
         Right $ foldRecipe (followRecipe) (fst raw) (snd raw)
         where inputs = eitherDecode arg :: Either String (Solution, [Step])
+
+decoderTwo :: B.ByteString -> Either String (Writer String (Emulsion Solution))
+decoderTwo arg = do
+    raw <- inputs
+    Right $ do
+        tell $ show $ startEmulsion (fst raw) (snd raw)
+        return $ startEmulsion (fst raw) (snd raw)
+    where inputs = eitherDecode arg :: Either String (Solution, [Step])

@@ -16,3 +16,5 @@ class Chemical a where
   reactForLeftoverA x y = molesToGrams x finalMoles
     where leftoverMoles = min (moles x) (moles y)
           finalMoles = moles x - leftoverMoles
+  compareQuantity :: (Double -> Double -> Bool) -> a -> Double -> Bool
+  compareQuantity f a = f (grams a)

@@ -1,9 +1,9 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE LambdaCase #-}
 module Solution (
-  Solution(..), Step(..), Mix,
+  Solution(..), Step(..), Mix, Pour(..),
   foldRecipe, followRecipe, 
-  saltReaction
+  saltReaction, mixer, addSolutions
   ) where
 
 -- Hackage
@@ -29,7 +29,6 @@ data Solution = SOLUTION {
   otherChemicals :: Maybe [ChemicalModifier],
   water :: Maybe Double,
   celsius :: Maybe Temperature,
-  currentlyResting :: Maybe Minute,
   silverHalides :: Maybe [SilverHalide]
 } deriving (Generic, Show)
 
@@ -46,10 +45,11 @@ prettySolution s =
 -- Steps you can take
 
 data Step = TEMPERATURE {newCelsius :: Temperature}
- | ADDITION {solutions :: [(Solution, Rate)]}
+ | ADDITION {additions :: [Pour]}
  | REST {minutes :: Double}
- | WASH
- | STOP deriving (Generic, Show)
+ | WASH deriving (Generic, Show)
+
+data Pour = POUR {solution :: Solution, rate :: Rate} deriving (Generic, Show)
 
 -- Fold over the recipe // state machine
 
@@ -63,94 +63,29 @@ foldRecipe f b c = do
 -- Functions that we can pass into the state machine that we will fold over the recipe
 
 followRecipe :: Solution -> Step -> Writer String Solution
-followRecipe soln STOP = do
-  tell "STOP"
-  return soln
 followRecipe soln (TEMPERATURE newTemp) = do
   tell $ unlines [ unwords ["SET TEMPERATURE TO", prettyTemperature newTemp] ]
   return soln {celsius = Just newTemp}
 followRecipe soln (REST minutes) = do
   tell $ unlines [ unwords ["REST FOR", show minutes, "MINUTES"] ]
-  return soln {currentlyResting = Just minutes}
+  return soln
 followRecipe soln WASH = do
-    tell "WASH EMULSION"
+    tell $ unlines ["WASH EMULSION"]
     return soln
 followRecipe soln a@(ADDITION nextSolns) = do
   tell $ unlines $ map (
-      \x -> "ADD TO SOLUTION:\n" ++ prettySolution (fst x) ++ "--At " ++ prettyRate (snd x)
+      \x -> "ADD TO SOLUTION:\n" ++ prettySolution (solution x) ++ "--At " ++ prettyRate (rate x)
     ) nextSolns
   return $ mixer soln a
 
--- Gelatin concentration %
--- x Molar concentrations of silver halides
--- x Ratio of gelatin to halides
--- % Silver reacted
--- Temperature / time
--- in consideration of phases
--- Guess coating power and amt silver per sq
--- analyzeRecipe :: Solution -> Step -> Writer String Solution
--- analyzeRecipe soln STOP = do
---   tell $ unlines $ [
---     "FINAL SOLUTION:",
---     prettySolution soln,
---     "MOLAR CONCENTRATIONS OF SILVER HALIDES:",
---     unwords $ map (\x -> prettyHalideRatio x (fromMaybe [] (silverHalides soln))) (fromMaybe [] (silverHalides soln)),
---     "GELATIN / WATER RATIO:",
---     show $ ratioGelatinWater soln,
---     "GELATIN / HALIDES RATIO:",
---     show $ ratioGelatinHalides soln
---     "ALL HALIDES / GELATIN RATIO:",
---     show $ sum ( ratioHalidesGelatin soln )
---       ] ++ catMaybes [
---         "GELATIN / WATER RATIO:",
---         show $ ratioGelatinWater soln
---           ]
---   return soln
--- analyzeRecipe soln (TEMPERATURE newTemp) = do
---   tell $ unlines [ unwords ["SET TEMPERATURE TO", prettyTemperature newTemp] ]
---   return soln {celsius = newTemp}
--- analyzeRecipe soln (REST minutes) = do
---   tell $ unlines [ unwords ["REST FOR", show minutes, "MINUTES"] ]
---   return soln {currentlyResting = minutes}
--- analyzeRecipe soln WASH = do
---   tell "Washed"
---   return soln
--- analyzeRecipe soln a@(ADDITION nextSolns) = do
---   tell $ unlines (["ADD TO SOLUTION:"] ++ do
---       t <- nextSolns
---       [prettySolution (fst t), "--At " ++ prettyRate (snd t)]
---     )
---   return $ mixer soln a
 
 mixer :: Solution -> Step -> Solution
 mixer soln (TEMPERATURE t) = soln {celsius = Just t}
-mixer soln (REST t) = soln {currentlyResting = Just t}
+mixer soln (REST t) = soln
 mixer soln WASH = soln
-mixer soln STOP = soln
 mixer soln (ADDITION sols) = foldl addSolutions x xs
-    where x = fst $ head sols
-          xs = map fst $ tail sols
-    
-
--- addSolutions :: Solution -> Solution -> Solution
--- addSolutions soln newSoln = SOLUTION {
---   salts = saltReaction newsilverNitrate newSalts,
---   silverNitrate = leftoverNitrate,
---   gramsGelatin = Just $ fromMaybe 0.0 (gramsGelatin soln) + fromMaybe 0.0 (gramsGelatin newSoln),
---   silverHalides = Just $ mergeHalides $ previousHalides ++ reactedHalides,
---   ph = newPh,
---   otherChemicals = otherChemicals soln ++ otherChemicals newSoln,
---   water = water soln + water newSoln,
---   celsius = if celsius soln == celsius newSoln then celsius soln else Nothing,
---   currentlyResting = 0.0
--- } where newSalts = sort $ mergeSalts $ salts soln ++ salts newSoln
---         newsilverNitrate = SILVERNITRATE $ Just (grams (silverNitrate soln) + grams (silverNitrate newSoln) )
---         reaction = saltsToHalides (newsilverNitrate, newSalts) 
---         reactedNitrate = map fst reaction
---         leftoverNitrate = if not (null reactedNitrate) then last reactedNitrate else SILVERNITRATE $ Just 0.0
---         reactedHalides = map snd reaction
---         previousHalides = mergeHalides (fromMaybe [] (silverHalides soln)) ++ (fromMaybe [] (silverHalides newSoln))
---         newPh = mergePH (ph soln) (ph newSoln)
+    where x = solution $ head sols
+          xs = map solution $ tail sols
 
 -- Reactions
 
@@ -160,7 +95,7 @@ addSolutions soln newSoln =
     totalSaltsInSolutionBefore = mergeSalts $ foldl (++) [] $ catMaybes [salts soln, salts newSoln]
     totalNitrateInSolution = mergeNitrate (silverNitrate soln) (silverNitrate newSoln)
     reaction = saltsToHalides (totalNitrateInSolution, totalSaltsInSolutionBefore)
-    leftoverNitrate = last $ map fst reaction
+    leftoverNitrate = if not . null $ reaction then last $ map fst reaction else SILVERNITRATE{Ingredients.SilverNitrate.gramAmounts = 0}
     generatedHalides = map snd reaction
     previousHalides = mergeHalides (fromMaybe [] (silverHalides soln)) ++ fromMaybe [] (silverHalides newSoln)
   in SOLUTION {
@@ -170,8 +105,7 @@ addSolutions soln newSoln =
     silverHalides = Just $ mergeHalides $ previousHalides ++ generatedHalides,
     otherChemicals = Just $ nub $ foldl (++) [] $ catMaybes [otherChemicals soln, otherChemicals newSoln],
     water = Just $ sum . catMaybes $ [water soln, water newSoln],
-    celsius = if celsius soln == celsius newSoln then celsius soln else Nothing,
-    currentlyResting = Just 0.0
+    celsius = if celsius soln == celsius newSoln then celsius soln else Nothing
   }
 
 saltsToHalides :: (SilverNitrate, [Salt]) -> [(SilverNitrate, SilverHalide)]
@@ -196,16 +130,3 @@ saltReaction nitrate (x:xs) = leftoverSalt : saltReaction leftoverNitrate xs
           a@(NaBr amt) -> KBr $ reactForLeftoverA a nitrate
           a@(NaCl amt) -> NaCl $ reactForLeftoverA a nitrate
         leftoverNitrate = SILVERNITRATE (reactForLeftoverA nitrate x)
-
--- Analysis
-
-ratioGelatinWater :: Solution -> Maybe Double
-ratioGelatinWater sol = (gelatin /) <$> diHydrogenMonoxide where
-  gelatin = fromMaybe 0.0 (gramsGelatin sol)
-  diHydrogenMonoxide = water sol
-
-ratioHalidesGelatin :: Solution -> [Double]
-ratioHalidesGelatin SOLUTION{silverHalides=Just []} = []
-ratioHalidesGelatin SOLUTION{silverHalides=Nothing} = []
-ratioHalidesGelatin SOLUTION{gramsGelatin=Nothing} = []
-ratioHalidesGelatin SOLUTION{silverHalides=(Just listHalide), gramsGelatin = Just gelatin} = map (\x -> grams x / gelatin) listHalide

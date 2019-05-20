@@ -11,7 +11,7 @@ import Data.Data
 
 type Second = Double
 type Minute = Double
-type Temperature = Maybe Double
+type Temperature = Double
 data Unit = GRAM | MILLILITER  deriving (Generic, Show, Typeable, Data, Eq)
 data Rate = RATE { amountAdded :: Double, overSeconds :: Second } deriving (Generic, Show) -- percent / over time minutes
 
@@ -20,8 +20,7 @@ prettyUnit GRAM = "grams"
 prettyUnit MILLILITER = "milliliters"
 
 prettyTemperature :: Temperature -> String
-prettyTemperature (Just t) = unwords [show t, "Celsius"]
-prettyTemperature Nothing = ""
+prettyTemperature t = unwords [show t, "Celsius"]
 
 prettyRate :: Rate -> String
 prettyRate (RATE amountAdded 0.0) = unwords ["rate", show $ amountAdded * 100, "%", "immediately"]

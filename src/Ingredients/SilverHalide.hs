@@ -28,6 +28,7 @@ instance Chemical SilverHalide where
               (AgI amountMoles) -> amountMoles
               (AgBr amountMoles) -> amountMoles
               (AgCl amountMoles) -> amountMoles
+  compareQuantity f a = f (moles a)
 
 mergeHalide :: SilverHalide -> SilverHalide -> Maybe SilverHalide
 mergeHalide (AgI x) (AgI y) = Just AgI{amountMoles = x + y}

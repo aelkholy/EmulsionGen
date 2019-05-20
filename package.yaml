@@ -25,6 +25,8 @@ dependencies:
 - bytestring
 - mtl
 - sbv
+- optparse-applicative
+- recursion-schemes
 
 library:
   source-dirs: src

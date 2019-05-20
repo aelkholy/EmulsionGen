@@ -22,31 +22,32 @@
           }
         ],
       "water": 425.0,
-      "celsius": 55.0,
-      "currentlyResting": 0.0
+      "celsius": 55.0
   },
   [
     {
       "tag": "ADDITION",
-      "solutions": [
-        [{
-        "silverNitrate": {
-            "gramAmounts": 20.0
-        },
-        "water": 100.0,
-        "celsius": 55.0
-      },
-      {
-        "amountAdded": 1.0,
-        "overSeconds": 0.0
-      }]
-    ]
+      "additions": [
+          {
+          "solution": {
+            "silverNitrate": {
+                "gramAmounts": 20.0
+            },
+            "water": 100.0,
+            "celsius": 55.0
+          },
+          "rate": {
+            "amountAdded": 1.0,
+            "overSeconds": 0.0
+          }
+        }
+      ]
     },
     {
       "tag": "ADDITION",
-      "solutions": [
-        [
-          {
+      "additions": [
+        {
+          "solution": {
             "salts": [
               {
                 "tag": "KBr",
@@ -66,36 +67,35 @@
               }
             ],
             "water": 40.0,
-            "celsius": 55.0,
-            "currentlyResting": 0.0
+            "celsius": 55.0
           },
-          {
+          "rate": {
             "amountAdded": 1.0,
             "overSeconds": 0.0
           }
-        ]
+        }
       ]
     },
     {
       "tag": "ADDITION",
-      "solutions": [
-      [
+      "additions": [
         {
-        "salts": [
-          {
-            "tag": "KI",
-            "gramAmount": 0.12
+          "solution": {
+            "salts": [
+              {
+                "tag": "KI",
+                "gramAmount": 0.12
+              }
+            ],
+            "water": 12.0,
+            "currentlyResting": 0.0
+          },
+          "rate": {
+            "amountAdded": 1.0,
+            "overSeconds": 0.0
           }
-        ],
-        "water": 12.0,
-        "currentlyResting": 0.0
-      },
-      {
-        "amountAdded": 1.0,
-        "overSeconds": 0.0
-      }
+        }
       ]
-    ]
     },
     {
       "tag": "TEMPERATURE",
@@ -107,9 +107,9 @@
     },
     {
       "tag": "ADDITION",
-      "solutions": [
-        [
-          {
+      "additions": [
+        {
+          "solution": {
             "otherChemicals": [
               {
                 "name":"Magnesium Oxide",
@@ -119,33 +119,41 @@
               }
             ]
           },
-          {
+          "rate": {
             "amountAdded": 1.0,
             "overSeconds": 0.0
           }
-        ]
-    ]
+        }
+      ]
     },
     {
       "tag": "ADDITION",
-      "solutions": [
-        [
-          {
+      "additions": [
+        {
+          "solution": {
             "silverNitrate": {
                 "gramAmounts": 3.0
             },
             "water": 30.0,
             "currentlyResting": 0.0
           },
-          {
+          "rate": {
             "amountAdded": 1.0,
             "overSeconds": 0.0
           }
-        ]
-    ]
+        }
+      ]
     },
     {
-        "tag": "STOP"
+      "tag": "WASH"
+    },
+    {
+      "tag": "TEMPERATURE",
+      "newCelsius": 45.0
+    },
+    {
+      "tag": "REST",
+      "minutes": 60.0
     }
   ]
 ]
