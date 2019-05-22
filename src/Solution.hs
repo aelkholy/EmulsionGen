@@ -28,7 +28,6 @@ data Solution = SOLUTION {
   gramsGelatin :: Maybe Double,
   otherChemicals :: Maybe [ChemicalModifier],
   water :: Maybe Double,
-  celsius :: Maybe Temperature,
   silverHalides :: Maybe [SilverHalide]
 } deriving (Generic, Show)
 
@@ -65,7 +64,7 @@ foldRecipe f b c = do
 followRecipe :: Solution -> Step -> Writer String Solution
 followRecipe soln (TEMPERATURE newTemp) = do
   tell $ unlines [ unwords ["SET TEMPERATURE TO", prettyTemperature newTemp] ]
-  return soln {celsius = Just newTemp}
+  return soln
 followRecipe soln (REST minutes) = do
   tell $ unlines [ unwords ["REST FOR", show minutes, "MINUTES"] ]
   return soln
@@ -78,9 +77,8 @@ followRecipe soln a@(ADDITION nextSolns) = do
     ) nextSolns
   return $ mixer soln a
 
-
 mixer :: Solution -> Step -> Solution
-mixer soln (TEMPERATURE t) = soln {celsius = Just t}
+mixer soln (TEMPERATURE t) = soln
 mixer soln (REST t) = soln
 mixer soln WASH = soln
 mixer soln (ADDITION sols) = foldl addSolutions x xs
@@ -104,8 +102,7 @@ addSolutions soln newSoln =
     gramsGelatin = Just $ sum . catMaybes $ [gramsGelatin soln, gramsGelatin newSoln],
     silverHalides = Just $ mergeHalides $ previousHalides ++ generatedHalides,
     otherChemicals = Just $ nub $ foldl (++) [] $ catMaybes [otherChemicals soln, otherChemicals newSoln],
-    water = Just $ sum . catMaybes $ [water soln, water newSoln],
-    celsius = if celsius soln == celsius newSoln then celsius soln else Nothing
+    water = Just $ sum . catMaybes $ [water soln, water newSoln]
   }
 
 saltsToHalides :: (SilverNitrate, [Salt]) -> [(SilverNitrate, SilverHalide)]

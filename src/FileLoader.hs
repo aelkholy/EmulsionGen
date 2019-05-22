@@ -1,6 +1,6 @@
 module FileLoader (
     decoder
-    ,decoderTwo
+    -- ,decoderTwo
     ) where
 
 -- Home team
@@ -63,10 +63,10 @@ decoder arg = do
         Right $ foldRecipe (followRecipe) (fst raw) (snd raw)
         where inputs = eitherDecode arg :: Either String (Solution, [Step])
 
-decoderTwo :: B.ByteString -> Either String (Writer String (Emulsion Solution))
-decoderTwo arg = do
-    raw <- inputs
-    Right $ do
-        tell $ show $ startEmulsion (fst raw) (snd raw)
-        return $ startEmulsion (fst raw) (snd raw)
-    where inputs = eitherDecode arg :: Either String (Solution, [Step])
+-- decoderTwo :: B.ByteString -> Either String (Writer String (Emulsion Solution))
+-- decoderTwo arg = do
+--     raw <- inputs
+--     Right $ do
+--         tell $ show $ startEmulsion (fst raw) (snd raw)
+--         return $ startEmulsion (fst raw) (snd raw)
+--     where inputs = eitherDecode arg :: Either String (Solution, [Step])
