@@ -55,7 +55,7 @@
         [
           {
             "silverNitrate": {
-              "gramAmounts": 5.1
+              "gramAmount": 5.1
             },
             "water": 40.0,
             "celsius": 55.0

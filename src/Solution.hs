@@ -1,9 +1,17 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE LambdaCase #-}
 module Solution (
-  Solution(..), Step(..), Mix, Pour(..),
-  foldRecipe, followRecipe, 
-  saltReaction, mixer, addSolutions
+  Solution(..)
+  , Step(..)
+  , Mix
+  , Pour(..)
+  , foldRecipe
+  , followRecipe
+  , saltReaction
+  , mixer
+  , addSolutions
+  , washSolution
+  , prettySolution
   ) where
 
 -- Hackage
@@ -70,7 +78,7 @@ followRecipe soln (REST minutes) = do
   return soln
 followRecipe soln WASH = do
     tell $ unlines ["WASH EMULSION"]
-    return soln
+    return $ washSolution soln
 followRecipe soln a@(ADDITION nextSolns) = do
   tell $ unlines $ map (
       \x -> "ADD TO SOLUTION:\n" ++ prettySolution (solution x) ++ "--At " ++ prettyRate (rate x)
@@ -90,10 +98,10 @@ mixer soln (ADDITION sols) = foldl addSolutions x xs
 addSolutions :: Solution -> Solution -> Solution
 addSolutions soln newSoln = 
   let
-    totalSaltsInSolutionBefore = mergeSalts $ foldl (++) [] $ catMaybes [salts soln, salts newSoln]
+    totalSaltsInSolutionBefore = mergeSalts $ concat $ catMaybes [salts soln, salts newSoln]
     totalNitrateInSolution = mergeNitrate (silverNitrate soln) (silverNitrate newSoln)
     reaction = saltsToHalides (totalNitrateInSolution, totalSaltsInSolutionBefore)
-    leftoverNitrate = if not . null $ reaction then last $ map fst reaction else SILVERNITRATE{Ingredients.SilverNitrate.gramAmounts = 0}
+    leftoverNitrate = if not . null $ reaction then last $ map fst reaction else totalNitrateInSolution
     generatedHalides = map snd reaction
     previousHalides = mergeHalides (fromMaybe [] (silverHalides soln)) ++ fromMaybe [] (silverHalides newSoln)
   in SOLUTION {
@@ -101,7 +109,7 @@ addSolutions soln newSoln =
     silverNitrate = Just leftoverNitrate,
     gramsGelatin = Just $ sum . catMaybes $ [gramsGelatin soln, gramsGelatin newSoln],
     silverHalides = Just $ mergeHalides $ previousHalides ++ generatedHalides,
-    otherChemicals = Just $ nub $ foldl (++) [] $ catMaybes [otherChemicals soln, otherChemicals newSoln],
+    otherChemicals = Just $ nub $ concat $ catMaybes [otherChemicals soln, otherChemicals newSoln],
     water = Just $ sum . catMaybes $ [water soln, water newSoln]
   }
 
@@ -110,7 +118,7 @@ saltsToHalides (sn, ss) = unfoldr reactor (sn, ss)
 
 reactor :: (SilverNitrate, [Salt]) -> Maybe ((SilverNitrate, SilverHalide), (SilverNitrate, [Salt]))
 reactor (nitrate, []) = Nothing
-reactor (nitrate, s:alts) = Just((nitrate, newHalide s), (newNitrate, alts))
+reactor (nitrate, s:alts) = Just((newNitrate, newHalide s), (newNitrate, alts))
   where newNitrate = SILVERNITRATE $ reactForLeftoverA nitrate s
         newHalide = \case
           a@(KI amt) -> AgI $ reactForAmountB nitrate a
@@ -127,3 +135,14 @@ saltReaction nitrate (x:xs) = leftoverSalt : saltReaction leftoverNitrate xs
           a@(NaBr amt) -> KBr $ reactForLeftoverA a nitrate
           a@(NaCl amt) -> NaCl $ reactForLeftoverA a nitrate
         leftoverNitrate = SILVERNITRATE (reactForLeftoverA nitrate x)
+
+
+washSolution :: Solution -> Solution
+washSolution (SOLUTION salts nitrate gelatin others water halides ) = SOLUTION {
+  salts = Just [],
+  silverNitrate = Just SILVERNITRATE {Ingredients.SilverNitrate.gramAmount = 0.0},
+  gramsGelatin = gelatin,
+  otherChemicals = others,
+  water = water,
+  silverHalides = halides
+}
