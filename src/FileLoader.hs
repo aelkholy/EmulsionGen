@@ -4,8 +4,10 @@ module FileLoader (
     ) where
 
 -- Home team
+import Step
 import Emulsion
 import Solution
+import Addition
 import Physics                              (Rate, Unit)
 import Ingredients.SilverNitrate            (SilverNitrate)
 import Ingredients.SilverHalide             (SilverHalide)
@@ -54,8 +56,8 @@ instance ToJSON Solution
 instance FromJSON Step
 instance ToJSON Step
 
-instance FromJSON Pour
-instance ToJSON Pour
+instance FromJSON Addition
+instance ToJSON Addition
 
 instance ToJSON Emulsion
 instance FromJSON Emulsion

@@ -1,14 +1,8 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE LambdaCase #-}
 module Solution (
-  Solution(..)
-  , Step(..)
-  , Mix
-  , Pour(..)
-  , foldRecipe
-  , followRecipe
+    Solution(..)
   , saltReaction
-  , mixer
   , addSolutions
   , washSolution
   , prettySolution
@@ -17,12 +11,10 @@ module Solution (
 -- Hackage
 import Data.Maybe
 import GHC.Generics
-import Control.Monad.Writer
-import Control.Monad                (foldM)
-import Data.List                    (sort, unfoldr, nub)
+import Data.List                    (unfoldr, nub)
 -- Homies
-import Physics                      (Second, Minute, Temperature, Rate, prettyTemperature, prettyRate)
 import Ingredients.Ingredient       (Chemical(..))
+import Physics                      (Second, Minute, Temperature, Rate, prettyTemperature, prettyRate)
 import Ingredients.SilverNitrate    (SilverNitrate(..), prettyNitrate, mergeNitrate)
 import Ingredients.SilverHalide     (SilverHalide(..), mergeHalides, prettyHalides, prettyHalideRatio)
 import Ingredients.Salt             (Salt(..), mergeSalts, prettySalts)
@@ -48,50 +40,6 @@ prettySolution s =
         dihydrogenMonoxide = fmap (("-In " ++) . (\x -> show x ++ "ml water")) (water s)
         halides = fmap (unwords . prettyHalides) (silverHalides s)
     in unlines $ map ("-" ++) (catMaybes [salty, nitrate, gelatin, others, dihydrogenMonoxide, halides])
-
--- Steps you can take
-
-data Step = TEMPERATURE {newCelsius :: Temperature}
- | ADDITION {additions :: [Pour]}
- | REST {minutes :: Double}
- | WASH deriving (Generic, Show)
-
-data Pour = POUR {solution :: Solution, rate :: Rate} deriving (Generic, Show)
-
--- Fold over the recipe // state machine
-
-type Mix = Solution -> Step -> Writer String Solution
-
-foldRecipe :: Foldable f => Mix -> Solution -> f Step -> Writer String Solution
-foldRecipe f b c = do
-  tell $ "START WITH:\n" ++ prettySolution b
-  foldM f b c
-
--- Functions that we can pass into the state machine that we will fold over the recipe
-
-followRecipe :: Solution -> Step -> Writer String Solution
-followRecipe soln (TEMPERATURE newTemp) = do
-  tell $ unlines [ unwords ["SET TEMPERATURE TO", prettyTemperature newTemp] ]
-  return soln
-followRecipe soln (REST minutes) = do
-  tell $ unlines [ unwords ["REST FOR", show minutes, "MINUTES"] ]
-  return soln
-followRecipe soln WASH = do
-    tell $ unlines ["WASH EMULSION"]
-    return $ washSolution soln
-followRecipe soln a@(ADDITION nextSolns) = do
-  tell $ unlines $ map (
-      \x -> "ADD TO SOLUTION:\n" ++ prettySolution (solution x) ++ "--At " ++ prettyRate (rate x)
-    ) nextSolns
-  return $ mixer soln a
-
-mixer :: Solution -> Step -> Solution
-mixer soln (TEMPERATURE t) = soln
-mixer soln (REST t) = soln
-mixer soln WASH = soln
-mixer soln (ADDITION sols) = foldl addSolutions x xs
-    where x = solution $ head sols
-          xs = map solution $ tail sols
 
 -- Reactions
 
