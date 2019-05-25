@@ -1,7 +1,7 @@
 module Main where
 
 -- MY MODS
-import FileLoader
+import Analysis
 -- FROM STACKAGE
 import qualified Data.ByteString.Lazy as B
 import System.Environment
@@ -17,8 +17,8 @@ main = do
       [] -> error "must supply file"
       [filePath] -> do
             file <- B.readFile filePath
-            -- case decoder file of
-            case decoderTwo file of
+            case decodeToRecipe file of
+            -- case decoderTwo file of
                 Left err -> System.IO.putStrLn err
                 Right ps -> putStr ( snd $ runWriter ps )
       _ -> error "too many arguments"

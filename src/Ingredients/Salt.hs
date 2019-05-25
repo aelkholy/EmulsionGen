@@ -1,10 +1,11 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
 module Ingredients.Salt (
   Salt(..),
   mergeSalts, mergeSalt, prettySalts
 ) where
 
 import GHC.Generics
+import Data.Aeson
 import Data.Maybe (catMaybes)
 import Control.Monad
 -- Home team
@@ -14,7 +15,7 @@ data Salt = KI {gramAmount :: Double}
   | KBr {gramAmount :: Double}
   | NaBr {gramAmount :: Double}
   | NaCl {gramAmount :: Double}
-   deriving (Generic, Show, Eq, Ord)
+   deriving (Generic, Show, Eq, Ord, ToJSON, FromJSON)
 
 instance Chemical Salt where
   molecularWeight (KI _) = 166.0028

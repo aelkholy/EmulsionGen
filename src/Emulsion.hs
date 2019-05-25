@@ -1,13 +1,15 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
+{-# LANGUAGE DeriveFunctor, DeriveFoldable, DeriveTraversable #-}
 module Emulsion (
-  Emulsion
-  , stage
-  , emulsionRunner
-  , analysis
+  State
+  , moveState
+  , stateAnalysis
+  -- , analysis
 ) where
 
 import Control.Monad.Writer
 import GHC.Generics
+import Data.Aeson
 import Data.Maybe                          (fromMaybe, isJust)
 import Data.List                           (partition)
 --
@@ -31,147 +33,68 @@ import qualified Ingredients.SilverNitrate  as N
 -- What does the final species look like?
 -- What is the pH during precipitation?
 
-data Emulsion = NOTHING { solution :: S.Solution, additionalSolutions :: [S.Solution], temperature :: Maybe Temperature}
-  | NORMAL { solution :: S.Solution, givingSolution :: A.Addition, additionalSolutions :: [S.Solution], duration :: Maybe Minute, temperature :: Maybe Temperature, emulsion :: Emulsion }
-  | REVERSE { solution :: S.Solution, givingSolution :: A.Addition, additionalSolutions :: [S.Solution], duration :: Maybe Minute, temperature :: Maybe Temperature, emulsion :: Emulsion }
-  | NJET { solution :: S.Solution, givingSolutions :: [A.Addition], additionalSolutions :: [S.Solution], duration :: Maybe Minute, temperature :: Maybe Temperature, emulsion :: Emulsion }
-  | GENERICWASH { solution :: S.Solution, additionalSolutions :: [S.Solution], emulsion :: Emulsion }
-  | DIGESTION { solution :: S.Solution, additionalSolutions :: [S.Solution], duration :: Maybe Minute, temperature :: Maybe Temperature, emulsion :: Emulsion }
-  deriving (Generic, Show)
+-- Might move to analysis
+data Emulsion a = Nil | Cons a (Emulsion a) deriving (Eq, Show, Functor, Foldable, Traversable)
 
--- Don't feel like bringing in the writer monad
-analysis :: Emulsion -> (String, S.Solution)
-analysis e@(NOTHING s a t) = let
-        text = unwords [
-            "START SOLUTION:\n",
-            S.prettySolution s,
-            "_w/ additions:\n",
-            unwords $ map S.prettySolution a
-          ]
-        in (text, mixStage e)
-analysis e@(NORMAL s g a d t ep) = let
-        thisText = unwords [
-            "NORMAL PRECIPITATION:\n",
-            "Add solution:\n",
-            A.prettyAddition g,
-            "Into solution:\n",
-            S.prettySolution s,
-            "Precipitation for:\n",
-            maybe "UNKNOWN DURATION" prettyMinute d,
-            "At temperature:\n",
-            maybe "UNKNOWN TEMPERATURE" prettyTemperature t
-          ]
-        previous = analysis ep
-        previousText = fst previous
-        previousSoln = snd previous
-        in (unwords [thisText, previousText], S.addSolutions previousSoln $ mixStage e)
-analysis e@(REVERSE s g a d t ep) = let
-          thisText = unwords [
-              "REVERSE PRECIPITATION:\n",
-              "Add solution:\n",
-              A.prettyAddition g,
-              "Into solution:\n",
-              S.prettySolution s,
-              "Precipitation for:\n",
-              maybe "UNKNOWN DURATION" prettyMinute d,
-              "At temperature:\n",
-              maybe "UNKNOWN TEMPERATURE" prettyTemperature t
-            ]
-          previous = analysis ep
-          previousText = fst previous
-          previousSoln = snd previous
-          in (unwords [thisText, previousText], S.addSolutions previousSoln $ mixStage e)
-analysis e@(NJET s gs a d t ep) = let
-            thisText = unwords $ [
-                "N-JET PRECIPITATION:\n",
-                "Jet the following solutions:\n"]
-                ++ map A.prettyAddition gs ++ [
-                "Into solution:\n",
-                S.prettySolution s,
-                "Precipitation for:\n",
-                maybe "UNKNOWN DURATION" prettyMinute d,
-                "At temperature:\n",
-                maybe "UNKNOWN TEMPERATURE" prettyTemperature t
-              ]
-            previous = analysis ep
-            previousText = fst previous
-            previousSoln = snd previous
-            in (unwords [thisText, previousText], S.addSolutions previousSoln $ mixStage e)
-analysis e@(GENERICWASH s a ep) = let
-              thisText = unwords $ [
-                  "WASH EMULSION:\n",
-                  "Solution looks like this:\n",
-                  S.prettySolution s,
-                  "Additionally add:\n"]
-                  ++ map S.prettySolution a
-              previous = analysis ep
-              previousText = fst previous
-              previousSoln = snd previous
-              in (unwords [thisText, previousText], S.addSolutions previousSoln $ mixStage e)
-analysis e@(DIGESTION s a d t ep) = let
-                thisText = unwords $ [
-                    "DIGESTION:\n",
-                    "Add the following:\n"]
-                    ++ map S.prettySolution a ++ [
-                    "Digest at:\n",
-                    maybe "UNKNOWN DURATION" prettyMinute d,
-                    "At temperature:\n",
-                    maybe "UNKNOWN TEMPERATURE" prettyTemperature t
-                  ]
-                previous = analysis ep
-                previousText = fst previous
-                previousSoln = snd previous
-                in (unwords [thisText, previousText], S.addSolutions previousSoln $ mixStage e)
+data State = NOTHING { solution :: S.Solution, additionalSolutions :: [S.Solution], temperature :: Maybe Temperature}
+  | NORMAL { solution :: S.Solution, givingSolution :: A.Addition, additionalSolutions :: [S.Solution], duration :: Maybe Minute, temperature :: Maybe Temperature }
+  | REVERSE { solution :: S.Solution, givingSolution :: A.Addition, additionalSolutions :: [S.Solution], duration :: Maybe Minute, temperature :: Maybe Temperature }
+  | NJET { solution :: S.Solution, givingSolutions :: [A.Addition], additionalSolutions :: [S.Solution], duration :: Maybe Minute, temperature :: Maybe Temperature }
+  | GENERICWASH { solution :: S.Solution, additionalSolutions :: [S.Solution] }
+  | DIGESTION { solution :: S.Solution, additionalSolutions :: [S.Solution], duration :: Maybe Minute, temperature :: Maybe Temperature }
+  deriving (Generic, Show, ToJSON, FromJSON)
 
-emulsionRunner :: S.Solution -> [Step] -> Emulsion
-emulsionRunner sol = foldl stage (NOTHING sol [] Nothing)
+-- This can be equivalent to the solution runner with a write monad.
+stateAnalysis :: S.Solution -> [Step] -> State
+stateAnalysis sol = foldl moveState (NOTHING sol [] Nothing)
 
-stage :: Emulsion -> Step -> Emulsion
+-- This will, given a state, give the next state
+moveState :: State -> Step -> State
 -- Deal with setting the temperature
-stage currentStage (TEMPERATURE newTemp) = case currentStage of
-                                                  w@(GENERICWASH s a e) -> DIGESTION { solution = S.washSolution $ mixStage w, additionalSolutions=[], duration = Nothing, temperature = Just newTemp, emulsion = currentStage}
+moveState currentStage (TEMPERATURE newTemp) = case currentStage of
+                                                  w@(GENERICWASH s a) -> DIGESTION { solution = S.washSolution $ mixStage w, additionalSolutions=[], duration = Nothing, temperature = Just newTemp}
                                                   other -> other { temperature = Just newTemp }
 -- Deal with setting the duration
-stage currentStage (REST minutes) = case currentStage of
+moveState currentStage (REST minutes) = case currentStage of
                                             NOTHING{} -> currentStage
                                             GENERICWASH{} -> currentStage
                                             other -> other {duration = Just minutes}
 -- Deal with entering wash stage
-stage currentStage WASH = case currentStage of
+moveState currentStage WASH = case currentStage of
                                   NOTHING {} -> currentStage
-                                  w@(GENERICWASH s a e) -> GENERICWASH {solution = S.washSolution $ S.washSolution $ mixStage w, additionalSolutions=[], emulsion = currentStage}
-                                  d@(DIGESTION s _ _ _ e) -> GENERICWASH {solution = S.washSolution $ mixStage d, additionalSolutions=[], emulsion = currentStage}
-                                  n@(NJET r g _ _ _ e) -> GENERICWASH {solution = S.washSolution $ mixStage n, additionalSolutions=[], emulsion = currentStage}
-                                  other -> GENERICWASH {solution = mixStage other, additionalSolutions=[], emulsion = currentStage}
+                                  w@(GENERICWASH s a) -> GENERICWASH {solution = S.washSolution $ S.washSolution $ mixStage w, additionalSolutions=[]}
+                                  d@(DIGESTION s _ _ _) -> GENERICWASH {solution = S.washSolution $ mixStage d, additionalSolutions=[]}
+                                  n@(NJET r g _ _ _) -> GENERICWASH {solution = S.washSolution $ mixStage n, additionalSolutions=[]}
+                                  other -> GENERICWASH {solution = mixStage other, additionalSolutions=[]}
 -- Deal with detecting precipitation
-stage currentStage@NOTHING{} ps@(ADDITION pours) = detectedPrecipitation currentStage pours
-stage currentStage@GENERICWASH{} ps@(ADDITION pours) = detectedPrecipitation currentStage pours
-stage currentStage ps@(ADDITION pours)
+moveState currentStage@NOTHING{} ps@(ADDITION pours) = detectedPrecipitation currentStage pours
+moveState currentStage@GENERICWASH{} ps@(ADDITION pours) = detectedPrecipitation currentStage pours
+moveState currentStage ps@(ADDITION pours)
   | isJust (duration currentStage) = detectedPrecipitation currentStage pours
   | otherwise = currentStage { solution = foldl S.addSolutions (solution currentStage) (map A.solution (fst partitioned)), additionalSolutions = additionalSolutions currentStage ++ map A.solution (fst partitioned)  }
   where partitioned = partition (\x -> containsNitratePour x || containsSaltPour x) pours 
 
-detectedPrecipitation :: Emulsion -> [A.Addition] -> Emulsion
+detectedPrecipitation :: State -> [A.Addition] -> State
 detectedPrecipitation base [] = base
 detectedPrecipitation base [add]
-        | containsNitrate (A.solution add) && containsSalt (mixStage base) = NORMAL { solution = mixStage base, givingSolution = add, additionalSolutions=[], duration = Nothing, temperature = Nothing, emulsion = base }
-        | containsSalt (A.solution add) && containsNitrate (mixStage base) = REVERSE { solution = mixStage base, givingSolution = add, additionalSolutions=[], duration = Nothing, temperature = Nothing, emulsion = base }
+        | containsNitrate (A.solution add) && containsSalt (mixStage base) = NORMAL { solution = mixStage base, givingSolution = add, additionalSolutions=[], duration = Nothing, temperature = Nothing }
+        | containsSalt (A.solution add) && containsNitrate (mixStage base) = REVERSE { solution = mixStage base, givingSolution = add, additionalSolutions=[], duration = Nothing, temperature = Nothing }
         | containsSaltPour add = base { solution = S.addSolutions (solution base) (A.solution add) } -- add salt to base if it contains it
         | containsNitratePour add = base { solution = S.addSolutions (solution base) (A.solution add) } -- add nitrate to base if it contains it
         | otherwise = base { additionalSolutions = additionalSolutions base ++ [A.solution add] } -- otherwise, add to additions
 detectedPrecipitation base adds = case partitioned of
                                         ([],a) -> base { additionalSolutions = additionalSolutions base ++ map A.solution a}
-                                        ([x],a) | containsSalt baseSolution && containsNitrate (A.solution x) -> NORMAL { solution = mixStage base, givingSolution = x, additionalSolutions=map A.solution a, duration = Nothing, temperature = Nothing, emulsion = base }
-                                                | containsNitrate baseSolution && containsSalt (A.solution x) -> REVERSE { solution = mixStage base, givingSolution = x, additionalSolutions=map A.solution a, duration = Nothing, temperature = Nothing, emulsion = base }
+                                        ([x],a) | containsSalt baseSolution && containsNitrate (A.solution x) -> NORMAL { solution = mixStage base, givingSolution = x, additionalSolutions=map A.solution a, duration = Nothing, temperature = Nothing }
+                                                | containsNitrate baseSolution && containsSalt (A.solution x) -> REVERSE { solution = mixStage base, givingSolution = x, additionalSolutions=map A.solution a, duration = Nothing, temperature = Nothing }
                                                 | otherwise -> base { additionalSolutions = additionalSolutions base ++ map A.solution a}
-                                        (x,a) -> NJET { solution = mixStage base, givingSolutions = x, additionalSolutions = map A.solution a, duration = Nothing, temperature = Nothing, emulsion = base }
+                                        (x,a) -> NJET { solution = mixStage base, givingSolutions = x, additionalSolutions = map A.solution a, duration = Nothing, temperature = Nothing }
                       where baseSolution = solution base
                             partitioned = partition (\x -> containsNitratePour x || containsSaltPour x) adds -- TODO: Deal with n jets properly
 
-mixStage :: Emulsion -> S.Solution
+mixStage :: State -> S.Solution
 mixStage (NOTHING s a _) = foldl S.addSolutions s a
-mixStage (GENERICWASH s a _) = foldl S.addSolutions s a
-mixStage (NJET s g a _ _ _) = 
+mixStage (GENERICWASH s a) = foldl S.addSolutions s a
+mixStage (NJET s g a _ _) = 
         let base = foldl S.addSolutions s a
             next = map A.solution g
         in foldl S.addSolutions base next

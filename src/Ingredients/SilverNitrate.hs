@@ -1,15 +1,17 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
 module Ingredients.SilverNitrate (
-  SilverNitrate(..), mergeNitrate,
-  prettyNitrate
+  SilverNitrate(..)
+  , mergeNitrate
+  , prettyNitrate
 ) where
 
 import GHC.Generics
+import Data.Aeson
 import Data.Maybe
 -- Home team
 import Ingredients.Ingredient (Chemical(..))
 
-newtype SilverNitrate = SILVERNITRATE {gramAmount :: Double} deriving (Generic, Show)
+newtype SilverNitrate = SILVERNITRATE {gramAmount :: Double} deriving (Generic, Show, ToJSON, FromJSON)
 
 -- instance Applicative SilverNitrate where  
 

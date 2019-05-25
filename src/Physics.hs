@@ -1,5 +1,4 @@
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
 module Physics (
   Second, Minute, Temperature
   , Unit (..)
@@ -12,13 +11,13 @@ module Physics (
 ) where
 
 import GHC.Generics
-import Data.Data
+import Data.Aeson
 
 type Second = Integer
 type Minute = Integer
 type Temperature = Double
-data Unit = GRAM | MILLILITER  deriving (Generic, Show, Typeable, Data, Eq)
-data Rate = RATE { amountAdded :: Double, overSeconds :: Second } deriving (Generic, Show) -- percent / over time minutes
+data Unit = GRAM | MILLILITER  deriving (Generic, Show, Eq, ToJSON, FromJSON)
+data Rate = RATE { amountAdded :: Double, overSeconds :: Second } deriving (Generic, Show, ToJSON, FromJSON) -- percent / over time minutes
 
 prettyUnit :: Unit -> String
 prettyUnit GRAM = "grams"

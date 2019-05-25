@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
 {-# LANGUAGE LambdaCase #-}
 module Ingredients.SilverHalide (
   SilverHalide(..), mergeHalides,
@@ -7,6 +7,7 @@ module Ingredients.SilverHalide (
 
 -- Away
 import GHC.Generics
+import Data.Aeson
 import Data.Maybe
 import Control.Monad          (foldM)
 -- Home Team
@@ -14,7 +15,7 @@ import Ingredients.Ingredient (Chemical(..))
 
 data SilverHalide = AgI { amountMoles :: Double }
   | AgBr { amountMoles :: Double }
-  | AgCl { amountMoles :: Double } deriving (Generic, Show)
+  | AgCl { amountMoles :: Double } deriving (Generic, Show, ToJSON, FromJSON)
 
 instance Chemical SilverHalide where
   molecularWeight (AgI _)  = 234.77

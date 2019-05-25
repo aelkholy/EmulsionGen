@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
 {-# LANGUAGE LambdaCase #-}
 module Solution (
     Solution(..)
@@ -11,6 +11,7 @@ module Solution (
 -- Hackage
 import Data.Maybe
 import GHC.Generics
+import Data.Aeson
 import Data.List                    (unfoldr, nub)
 -- Homies
 import Ingredients.Ingredient       (Chemical(..))
@@ -29,7 +30,7 @@ data Solution = SOLUTION {
   otherChemicals :: Maybe [ChemicalModifier],
   water :: Maybe Double,
   silverHalides :: Maybe [SilverHalide]
-} deriving (Generic, Show)
+} deriving (Generic, Show, ToJSON, FromJSON)
 
 prettySolution :: Solution -> String
 prettySolution s = 
