@@ -10,7 +10,7 @@ import Data.Aeson
 import Physics
 import qualified Solution as S
 
-data Addition = ADDITION {solution :: S.Solution, rate :: Rate} deriving (Generic, Show, ToJSON, FromJSON)
+data Addition = ADDITION {solution :: S.Solution, rate :: Rate} deriving (Generic, Show, Eq, ToJSON, FromJSON)
 
 prettyAddition :: Addition -> String
 prettyAddition (ADDITION s r) = unwords [S.prettySolution s, "--AT RATE", prettyRate r]

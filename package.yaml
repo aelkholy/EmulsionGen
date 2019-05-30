@@ -24,7 +24,8 @@ dependencies:
 - aeson
 - bytestring
 - mtl
-- sbv
+- sbv >= 8.2
+- syb
 - optparse-applicative
 - recursion-schemes
 

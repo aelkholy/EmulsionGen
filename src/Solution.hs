@@ -30,7 +30,7 @@ data Solution = SOLUTION {
   otherChemicals :: Maybe [ChemicalModifier],
   water :: Maybe Double,
   silverHalides :: Maybe [SilverHalide]
-} deriving (Generic, Show, ToJSON, FromJSON)
+} deriving (Show, Eq, Generic, ToJSON, FromJSON)
 
 prettySolution :: Solution -> String
 prettySolution s = 

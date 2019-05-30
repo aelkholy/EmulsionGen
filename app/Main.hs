@@ -17,8 +17,8 @@ main = do
       [] -> error "must supply file"
       [filePath] -> do
             file <- B.readFile filePath
-            case decodeToRecipe file of
-            -- case decoderTwo file of
+            -- case decodeToProcedure file of
+            case decodeToAnalysis file of
                 Left err -> System.IO.putStrLn err
                 Right ps -> putStr ( snd $ runWriter ps )
       _ -> error "too many arguments"

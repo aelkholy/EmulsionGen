@@ -11,7 +11,7 @@ import Data.Maybe
 -- Home team
 import Ingredients.Ingredient (Chemical(..))
 
-newtype SilverNitrate = SILVERNITRATE {gramAmount :: Double} deriving (Generic, Show, ToJSON, FromJSON)
+newtype SilverNitrate = SILVERNITRATE {gramAmount :: Double} deriving (Generic, Show, Eq, ToJSON, FromJSON)
 
 -- instance Applicative SilverNitrate where  
 

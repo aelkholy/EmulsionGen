@@ -15,7 +15,7 @@ import Ingredients.Ingredient (Chemical(..))
 
 data SilverHalide = AgI { amountMoles :: Double }
   | AgBr { amountMoles :: Double }
-  | AgCl { amountMoles :: Double } deriving (Generic, Show, ToJSON, FromJSON)
+  | AgCl { amountMoles :: Double } deriving (Generic, Show, Eq, ToJSON, FromJSON)
 
 instance Chemical SilverHalide where
   molecularWeight (AgI _)  = 234.77

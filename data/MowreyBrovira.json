@@ -7,9 +7,9 @@
   [
     {
       "tag": "ADDITION",
-      "solutions": [
-        [
-          {
+      "additions": [
+        {
+          "solution": {
             "salts": [
               {
                 "tag": "NaBr",
@@ -17,22 +17,18 @@
               }
             ]
           },
-          {
+          "rate": {
             "amountAdded": 1.0,
             "overSeconds": 0.0
           }
-        ]
+        }
       ]
     },
     {
-      "tag": "TEMPERATURE",
-      "newCelsius": 55.0
-    },
-    {
       "tag": "ADDITION",
-      "solutions": [
-        [
-          {
+      "additions": [
+        {
+          "solution": {
             "otherChemicals": [
               {
                 "name": "Rhodium Chloride",
@@ -42,33 +38,96 @@
               }
             ]
           },
-          {
+          "rate": {
             "amountAdded": 1.0,
             "overSeconds": 0.0
           }
-        ]
+        }
       ]
     },
     {
       "tag": "ADDITION",
-      "solutions": [
-        [
-          {
+      "additions": [
+        {
+          "solution": {
             "silverNitrate": {
               "gramAmount": 5.1
             },
             "water": 40.0,
             "celsius": 55.0
           },
-          {
+          "rate": {
             "amountAdded": 0.25,
             "overSeconds": 60.0
           }
-        ]
+        }
       ]
     },
     {
-      "tag": "END"
+      "tag": "TEMPERATURE",
+      "newCelsius": 55.0
+    },
+    {
+      "tag": "REST",
+      "minutes": 10.0
+    },
+    {
+      "tag": "TEMPERATURE",
+      "newCelsius": 40.0
+    },
+    {
+      "tag": "TEMPERATURE",
+      "newCelsius": 60.0
+    },
+    {
+      "tag": "ADDITION",
+      "additions": [
+        {
+          "solution": {
+            "otherChemicals": [
+              {
+                "name": "Sodium Hypo (pentahydrate)",
+                "amount": 4.0,
+                "unit": "MILLILITER",
+                "conc": 0.1
+              }
+            ]
+          },
+          "rate": {
+            "amountAdded": 1.0,
+            "overSeconds": 0
+          }
+        }
+      ]
+    },
+    {
+      "tag": "REST",
+      "minutes": 60.0,
+      "stirring": true
+    },
+    {
+      "tag": "ADDITION",
+      "additions": [
+        {
+          "solution": {
+            "salts": [
+              {
+                "tag": "KI",
+                "gramAmount": 0.01
+              }
+            ]
+          },
+          "rate": {
+            "amountAdded": 1.0,
+            "overSeconds": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "tag": "REST",
+      "minutes": 30.0,
+      "stirring": true
     }
   ]
 ]

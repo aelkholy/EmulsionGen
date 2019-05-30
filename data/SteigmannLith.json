@@ -1,12 +1,6 @@
 [
   {
       "gramsGelatin": 20,
-      "ph": {
-          "name": "HCl",
-          "amount": 2.0,
-          "unit": "MILLILITER",
-          "conc": 0.37
-        },
       "otherChemicals": [
           {
             "name": "CdCl2*2H2O",
@@ -19,12 +13,22 @@
             "amount": 2.0,
             "unit": "MILLILITER",
             "conc": 0.1
+          },
+          {
+            "name": "HCl",
+            "amount": 2.0,
+            "unit": "MILLILITER",
+            "conc": 0.37
           }
         ],
       "water": 425.0,
       "celsius": 55.0
   },
   [
+    {
+      "tag": "TEMPERATURE",
+      "newCelsius": 55.0
+    },
     {
       "tag": "ADDITION",
       "additions": [

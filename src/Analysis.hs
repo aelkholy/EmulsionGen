@@ -1,6 +1,7 @@
+{-# LANGUAGE ViewPatterns #-}
 module Analysis (
-  decodeToRecipe
-, decoderTwo
+    decodeToProcedure
+  , decodeToAnalysis
   ) where
 
 -- Home team
@@ -20,41 +21,56 @@ import qualified Data.ByteString.Lazy as B
 
 -- Marshal input json functions
 
-decodeToRecipe :: B.ByteString -> Either String (Writer String S.Solution)
-decodeToRecipe arg = do
+decodeToProcedure :: B.ByteString -> Either String (Writer String S.Solution)
+decodeToProcedure arg = do
         raw <- inputs
-        Right $ uncurry (followRecipe nextStep) raw
+        Right $ uncurry (toProcedure nextStep) raw
         where inputs = eitherDecode arg :: Either String (S.Solution, [Step.Step])
 
-decoderTwo :: B.ByteString -> Either String (Writer String E.State)
-decoderTwo arg = do
-    raw <- inputs
-    Right $ do
-        tell $ show $ E.stateAnalysis (fst raw) (snd raw)
-        return $ E.stateAnalysis (fst raw) (snd raw)
-    where inputs = eitherDecode arg :: Either String (S.Solution, [Step.Step])
+decodeToAnalysis :: B.ByteString -> Either String (Writer String [E.State])
+decodeToAnalysis arg = do
+        raw <- inputs
+        let states = uncurry E.makeStates raw
+        Right $ toAnalysis analyzeStates states
+        -- Right $ do
+        --   let final = map last $ uncurry E.makeStates raw
+        --   tell $ show final
+        --   return final
+        where inputs = eitherDecode arg :: Either String (S.Solution, [Step.Step])
 
--- decoderTwo :: B.ByteString -> Either String (Writer String Solution)
--- decoderTwo arg = do
---     raw <- inputs
---     let out = stateAnalysis (fst raw) (snd raw)
---     Right $ do
---           let final = analysis out
---           tell $ fst final
---           return $ snd final
---     where inputs = eitherDecode arg :: Either String (Solution, [Step])
+--
 
--- asdf
+type Analyze = [E.State] -> [E.State] -> Writer String [E.State]
 
-type Mix = S.Solution -> Step.Step -> Writer String S.Solution
+-- This will fold over the states to output the analysis of an emulsion
+toAnalysis :: Analyze -> [[E.State]] -> Writer String [E.State]
+toAnalysis a states = foldM a firstState (tail states)
+  where firstState = head states
 
--- Output the emulsion making procedure into the writer monad
-followRecipe :: Foldable f => Mix -> S.Solution -> f Step.Step -> Writer String S.Solution
-followRecipe f b c = do
+analyzeStates :: [E.State] -> [E.State] -> Writer String [E.State]
+analyzeStates stateOne stateTwo = do
+  tell $ analyzeState stateOne
+  -- normalize state in process
+  return stateTwo
+
+analyzeState :: [E.State] -> String
+analyzeState (reverse -> x@((E.NOTHING s a t):_)) = unlines [
+    "Nothing" ++ show x
+  ]
+analyzeState a@(reverse -> (x:_)) = unlines [
+    show a
+  ]
+
+
+type Procedure = S.Solution -> Step.Step -> Writer String S.Solution
+
+-- This will fold over the solution and steps to output the procedure for making an emulsion
+toProcedure :: Foldable f => Procedure -> S.Solution -> f Step.Step -> Writer String S.Solution
+toProcedure f b c = do
   tell $ "START WITH:\n" ++ S.prettySolution b
   foldM f b c
 
--- Function which advances the solution given the next step
+-- This will move stepwise through the procedure and output the next step
 nextStep :: S.Solution -> Step.Step -> Writer String S.Solution
 nextStep soln (Step.TEMPERATURE newTemp) = do
   tell $ unlines [ unwords ["SET TEMPERATURE TO", prettyTemperature newTemp] ]
@@ -66,6 +82,5 @@ nextStep soln Step.WASH = do
   tell $ unlines ["WASH EMULSION"]
   return $ S.washSolution soln
 nextStep soln a@(Step.ADDITION nextSolns) = do
-  tell $ unlines $ map A.prettyAddition nextSolns
+  tell $ unlines $ "ADD" : map A.prettyAddition nextSolns
   return $ Step.moveStep soln a
-
