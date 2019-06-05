@@ -27,7 +27,7 @@
   [
     {
       "tag": "TEMPERATURE",
-      "newCelsius": 55.0
+      "setCelsius": 55.0
     },
     {
       "tag": "ADDITION",
@@ -102,7 +102,7 @@
     },
     {
       "tag": "TEMPERATURE",
-      "newCelsius": 60.0
+      "setCelsius": 60.0
     },
     {
       "tag": "REST",
@@ -151,7 +151,7 @@
     },
     {
       "tag": "TEMPERATURE",
-      "newCelsius": 45.0
+      "setCelsius": 45.0
     },
     {
       "tag": "REST",

@@ -56,9 +56,9 @@ equivalentStates a b = False
 -- This will, given a state, give the next state
 nextState :: State -> Step -> State
 -- Deal with setting the temperature
-nextState currentStage (TEMPERATURE newTemp) = case currentStage of
-                                                  w@(GENERICWASH s a) -> DIGESTION { solution = S.washSolution $ mixStage w, additionalSolutions=[], duration = Nothing, temperature = Just newTemp}
-                                                  other -> other { temperature = Just newTemp }
+nextState currentStage (TEMPERATURE setCelsius) = case currentStage of
+                                                  w@(GENERICWASH s a) -> DIGESTION { solution = S.washSolution $ mixStage w, additionalSolutions=[], duration = Nothing, temperature = Just setCelsius}
+                                                  other -> other { temperature = Just setCelsius }
 -- Deal with setting the duration
 nextState currentStage (REST minutes) = case currentStage of
                                             NOTHING{} -> currentStage
@@ -73,7 +73,10 @@ nextState currentStage WASH = case currentStage of
                                   other -> GENERICWASH {solution = mixStage other, additionalSolutions=[]}
 -- Deal with detecting precipitation
 nextState currentStage@NOTHING{} ps@(ADDITION pours) = detectedPrecipitation currentStage pours
-nextState currentStage@GENERICWASH{} ps@(ADDITION pours) = detectedPrecipitation currentStage pours -- TODO: need to run washSolution here.
+nextState currentStage@GENERICWASH{} ps@(ADDITION pours) = case nextState of
+                                                                w@GENERICWASH{} -> w
+                                                                other -> other { solution = S.washSolution (solution other)}
+                                                            where nextState = detectedPrecipitation currentStage pours
 nextState currentStage ps@(ADDITION pours) -- This right here.
   | isJust (duration currentStage) = detectedPrecipitation currentStage pours
   | otherwise = currentStage { additionalSolutions = additionalSolutions currentStage ++ map A.solution pours }

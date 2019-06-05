@@ -65,7 +65,7 @@
     },
     {
       "tag": "TEMPERATURE",
-      "newCelsius": 55.0
+      "setCelsius": 55.0
     },
     {
       "tag": "REST",
@@ -73,11 +73,11 @@
     },
     {
       "tag": "TEMPERATURE",
-      "newCelsius": 40.0
+      "setCelsius": 40.0
     },
     {
       "tag": "TEMPERATURE",
-      "newCelsius": 60.0
+      "setCelsius": 60.0
     },
     {
       "tag": "ADDITION",
