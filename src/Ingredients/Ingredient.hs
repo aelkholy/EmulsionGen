@@ -3,6 +3,12 @@ module Ingredients.Ingredient (
 ) where
 
 class Chemical a where
+  gramSum :: [a] -> Double
+  gramSum [] = 0
+  gramSum (x:xs) = foldr ((+) . grams) (grams x) xs
+  moleSum :: [a] -> Double
+  moleSum [] = 0
+  moleSum (x:xs) = foldr ((+) . moles) (moles x) xs
   molecularWeight :: a -> Double
   grams :: a -> Double
   moles :: a -> Double

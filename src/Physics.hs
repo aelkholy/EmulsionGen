@@ -3,6 +3,7 @@ module Physics (
   Second, Minute, Temperature
   , Unit (..)
   , Rate(..)
+  , PowerHydrogen
   , prettyUnit
   , prettyTemperature
   , prettyRate
@@ -18,6 +19,18 @@ type Minute = Integer
 type Temperature = Double
 data Unit = GRAM | MILLILITER  deriving (Generic, Show, Eq, ToJSON, FromJSON)
 data Rate = RATE { amountAdded :: Double, overSeconds :: Second } deriving (Generic, Show, Eq, ToJSON, FromJSON) -- percent / over time minutes
+
+newtype PowerHydrogen = PH Double deriving (Generic, ToJSON, FromJSON)
+
+instance Show PowerHydrogen where 
+  show (PH x)
+    | x >= 12.5 = unwords [show x, "(very alkaline)"]
+    | x > 7 = unwords [show x, "(slightly alkaline)"]
+    | x == 7 = unwords [show x, "(neutral)"]
+    | x >= 3.5 = unwords [show x, "(slightly acidic)"]
+    | x >= 0 = unwords [show x, "(very acidic)"]
+instance Ord PowerHydrogen where compare (PH x) (PH y) = compare x y
+instance Eq PowerHydrogen where (==) (PH x) (PH y) = x == y
 
 prettyUnit :: Unit -> String
 prettyUnit GRAM = "grams"

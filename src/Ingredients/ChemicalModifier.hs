@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
 module Ingredients.ChemicalModifier (
-  ChemicalModifier
+  ChemicalModifier(..)
+  , prettyChemical
   , prettyChemicals
 ) where
 

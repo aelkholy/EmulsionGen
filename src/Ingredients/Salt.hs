@@ -31,7 +31,7 @@ prettySalt (NaBr s) = unwords ["Sodium Bromide" , show s, "grams"]
 prettySalt (NaCl s) = unwords ["Sodium Chloride" , show s, "grams"]
 
 prettySalts :: [Salt] -> [String]
-prettySalts s = map prettySalt s
+prettySalts = map prettySalt
 
 mergeSalt :: Salt -> Salt -> Maybe Salt
 mergeSalt (KI x) (KI y) = Just KI{gramAmount = x + y}

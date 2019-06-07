@@ -18,6 +18,7 @@ main = do
       [filePath] -> do
             file <- B.readFile filePath
             -- case decodeToProcedure file of
+            -- case decodeToDebug file of
             case decodeToAnalysis file of
                 Left err -> System.IO.putStrLn err
                 Right ps -> putStr ( snd $ runWriter ps )

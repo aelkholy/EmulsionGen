@@ -14,12 +14,12 @@ import GHC.Generics
 import Data.Aeson
 import Data.List                    (unfoldr, nub)
 -- Homies
+import Physics
 import Ingredients.Ingredient       (Chemical(..))
-import Physics                      (Second, Minute, Temperature, Rate, prettyTemperature, prettyRate)
 import Ingredients.SilverNitrate    (SilverNitrate(..), prettyNitrate, mergeNitrate)
 import Ingredients.SilverHalide     (SilverHalide(..), mergeHalides, prettyHalides, prettyHalideRatio)
-import Ingredients.Salt             (Salt(..), mergeSalts, prettySalts)
 import Ingredients.ChemicalModifier  (ChemicalModifier, prettyChemicals)
+import Ingredients.Salt             (Salt(..), mergeSalts, prettySalts)
 
 -- Solutions you can make
 
@@ -87,7 +87,7 @@ saltReaction nitrate (x:xs) = leftoverSalt : saltReaction leftoverNitrate xs
 
 
 washSolution :: Solution -> Solution
-washSolution (SOLUTION salts nitrate gelatin others water halides ) = SOLUTION {
+washSolution (SOLUTION salts nitrate gelatin others water halides) = SOLUTION {
   salts = Just [],
   silverNitrate = Just SILVERNITRATE {Ingredients.SilverNitrate.gramAmount = 0.0},
   gramsGelatin = gelatin,
