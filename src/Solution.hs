@@ -73,6 +73,7 @@ reactor (nitrate, s:alts) = Just((newNitrate, newHalide s), (newNitrate, alts))
           a@(KI amt) -> AgI $ reactForAmountB nitrate a
           a@(KBr amt) -> AgBr $ reactForAmountB nitrate a
           a@(NaBr amt) -> AgBr $ reactForAmountB nitrate a
+          a@(KCl amt) -> AgCl $ reactForAmountB nitrate a
           a@(NaCl amt) -> AgCl $ reactForAmountB nitrate a
 
 saltReaction :: SilverNitrate -> [Salt] -> [Salt]
@@ -82,6 +83,7 @@ saltReaction nitrate (x:xs) = leftoverSalt : saltReaction leftoverNitrate xs
           a@(KI amt) -> KI $ reactForLeftoverA a nitrate
           a@(KBr amt) -> KBr $ reactForLeftoverA a nitrate
           a@(NaBr amt) -> KBr $ reactForLeftoverA a nitrate
+          a@(KCl amt) -> KCl $ reactForLeftoverA a nitrate
           a@(NaCl amt) -> NaCl $ reactForLeftoverA a nitrate
         leftoverNitrate = SILVERNITRATE (reactForLeftoverA nitrate x)
 

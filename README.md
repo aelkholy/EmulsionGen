@@ -46,9 +46,8 @@ $ stack exec EmulsionGen data/MowreyBrovira.json
 ```
 
 ## Project TODOs ##
-Better handling of pH
-
-Multiple command line arguments
+-Support stirring
+-ChemicalModifiers in something other than water
 
 # Contributing #
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of

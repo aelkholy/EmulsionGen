@@ -24,11 +24,11 @@ newtype PowerHydrogen = PH Double deriving (Generic, ToJSON, FromJSON)
 
 instance Show PowerHydrogen where 
   show (PH x)
-    | x >= 12.5 = unwords [show x, "(very alkaline)"]
-    | x > 7 = unwords [show x, "(slightly alkaline)"]
-    | x == 7 = unwords [show x, "(neutral)"]
-    | x >= 3.5 = unwords [show x, "(slightly acidic)"]
-    | x >= 0 = unwords [show x, "(very acidic)"]
+    | x >= 12.5 = unwords ["pH", show x, "(very alkaline)"]
+    | x > 7 = unwords ["pH", show x, "(slightly alkaline)"]
+    | x == 7 = unwords ["pH", show x, "(neutral)"]
+    | x >= 3.5 = unwords ["pH", show x, "(slightly acidic)"]
+    | x >= 0 = unwords ["pH", show x, "(very acidic)"]
 instance Ord PowerHydrogen where compare (PH x) (PH y) = compare x y
 instance Eq PowerHydrogen where (==) (PH x) (PH y) = x == y
 

@@ -11,7 +11,7 @@ module State (
 import Control.Monad.Writer
 import GHC.Generics
 import Data.Aeson
-import Data.Maybe                          (fromMaybe, isJust)
+import Data.Maybe                          (fromMaybe, isJust, fromJust)
 import Data.List                           (partition, nub, groupBy)
 --
 import Step
@@ -53,7 +53,7 @@ nextState currentStage (TEMPERATURE setCelsius) = case currentStage of
 nextState currentStage (REST minutes) = case currentStage of
                                             NOTHING{} -> currentStage
                                             GENERICWASH{} -> currentStage
-                                            other -> other {duration = Just minutes}
+                                            other -> if isJust (duration other) then other {duration = Just (minutes + fromJust (duration other))} else other {duration = Just minutes}
 nextState currentStage (PH c p) = currentStage { setPH = Just p, solution = (solution currentStage) {S.otherChemicals = fmap (c:) (S.otherChemicals (solution currentStage))}}
 -- Deal with entering wash stage
 nextState currentStage WASH = case currentStage of
@@ -75,17 +75,17 @@ nextState currentStage ps@(ADDITION pours) -- This right here.
 detectedPrecipitation :: State -> [A.Addition] -> State
 detectedPrecipitation base [] = base
 detectedPrecipitation base [add]
-        | containsNitrate (A.solution add) && containsSalt (mixStage base) = NORMAL { solution = mixStage base, givingSolution = add, additionalSolutions=[], duration = Nothing, setPH = Nothing, temperature = Nothing }
-        | containsSalt (A.solution add) && containsNitrate (mixStage base) = REVERSE { solution = mixStage base, givingSolution = add, additionalSolutions=[], duration = Nothing, setPH = Nothing, temperature = Nothing }
+        | containsNitrate (A.solution add) && containsSalt (mixStage base) = NORMAL { solution = mixStage base, givingSolution = add, additionalSolutions=[], duration = Nothing, setPH = setPH base, temperature = Nothing }
+        | containsSalt (A.solution add) && containsNitrate (mixStage base) = REVERSE { solution = mixStage base, givingSolution = add, additionalSolutions=[], duration = Nothing, setPH = setPH base, temperature = Nothing }
         -- | containsSaltPour add = base { solution = S.addSolutions (solution base) (A.solution add) } -- add salt to base if it contains it
         -- | containsNitratePour add = base { solution = S.addSolutions (solution base) (A.solution add) } -- add nitrate to base if it contains it
         | otherwise = base { additionalSolutions = additionalSolutions base ++ [A.solution add] } -- otherwise, add to additions
 detectedPrecipitation base adds = case partitioned of
                                         ([],a) -> base { additionalSolutions = additionalSolutions base ++ map A.solution a}
-                                        ([x],a) | containsSalt baseSolution && containsNitrate (A.solution x) -> NORMAL { solution = mixStage base, givingSolution = x, additionalSolutions=map A.solution a, duration = Nothing, setPH = Nothing, temperature = Nothing }
-                                                | containsNitrate baseSolution && containsSalt (A.solution x) -> REVERSE { solution = mixStage base, givingSolution = x, additionalSolutions=map A.solution a, duration = Nothing, setPH = Nothing, temperature = Nothing }
+                                        ([x],a) | containsSalt baseSolution && containsNitrate (A.solution x) -> NORMAL { solution = mixStage base, givingSolution = x, additionalSolutions=map A.solution a, duration = Nothing, setPH = setPH base, temperature = Nothing }
+                                                | containsNitrate baseSolution && containsSalt (A.solution x) -> REVERSE { solution = mixStage base, givingSolution = x, additionalSolutions=map A.solution a, duration = Nothing, setPH = setPH base, temperature = Nothing }
                                                 | otherwise -> base { additionalSolutions = additionalSolutions base ++ map A.solution a}
-                                        (x,a) -> NJET { solution = mixStage base, givingSolutions = x, additionalSolutions = map A.solution a, duration = Nothing, setPH = Nothing, temperature = Nothing }
+                                        (x,a) -> NJET { solution = mixStage base, givingSolutions = x, additionalSolutions = map A.solution a, duration = Nothing, setPH = setPH base, temperature = Nothing }
                       where baseSolution = solution base
                             partitioned = partition (\x -> containsNitratePour x || containsSaltPour x) adds -- TODO: Deal with n jets edge cases properly
 
@@ -127,7 +127,7 @@ containsSalt sol =
 
 precipitationAnalysis :: State -> [String]
 precipitationAnalysis st = [
-    unwords ["-Precipitate for", maybe "UNKNOWN DURATION" prettyMinute d],
+    unwords ["-Precipitation is done for a total of", maybe "UNKNOWN DURATION" prettyMinute d],
     unwords ["-At temperature", maybe "UNKNOWN TEMPERATURE" prettyTemperature t],
     unwords ["-Precipitation is done at", maybe "UNKNOWN PH" show ph],
     unwords ["--Gram ratio of gelatin to all silver halides is", maybe "invalid. Precipitation done outside of gelatin." show gelXRatio],

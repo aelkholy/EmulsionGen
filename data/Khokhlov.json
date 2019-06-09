@@ -1,44 +1,67 @@
 [
   {
-      "gramsGelatin": null,
-      "salts": [
-        {
-          "tag": "KBr",
-          "gramAmount": 0.0
-        },
-        {
-          "tag": "NaCl",
-          "gramAmount": 0.0
-        }
-      ],
-      "otherChemicals": [
-          {
-            "name": null,
-            "amount": 0.0,
-            "unit": "GRAM",
-            "conc": null
-          },
-          {
-            "name": null,
-            "amount": 0.0,
-            "unit": "MILLILITER",
-            "conc": null
-          }
-        ],
-      "water": 0.0,
-      "celsius": 0.0
+      "gramsGelatin": 40,
+      "water": 800,
+      "celsius": 25
   },
   [
+    {
+      "tag": "PH",
+      "addition": {
+        "name": "Citric Acid",
+        "amount": null,
+        "unit": "MILLILITER",
+        "conc": null
+      },
+      "pH": 5.5
+    },
     {
       "tag": "ADDITION",
       "additions": [
         {
           "solution": {
             "silverNitrate": {
-                "gramAmount": 0.0
+                "gramAmount": 40
             },
-            "water": 0.0,
-            "celsius": 0.0
+            "water": 50,
+            "celsius": 25
+          },
+          "rate": {
+            "amountAdded": 1.0,
+            "overSeconds": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "tag": "REST",
+      "minutes": 1.0
+    },
+    {
+      "tag": "ADDITION",
+      "additions": [
+        {
+          "solution": {
+            "salts": [
+              {
+                "tag": "KBr",
+                "gramAmount": 17
+              },
+              {
+                "tag": "KCl",
+                "gramAmount": 7
+              }
+            ],
+            "otherChemicals": [
+              {
+                "name": "PMT",
+                "amount": 0.042,
+                "unit": "GRAM",
+                "conc": null
+              }
+            ],
+            "water": 50,
+            "celsius": 25
           },
           "rate": {
             "amountAdded": 1.0,
@@ -49,22 +72,58 @@
     },
     {
       "tag": "TEMPERATURE",
-      "setCelsius": 0.0
+      "setCelsius": 60
     },
     {
       "tag": "REST",
-      "minutes": 0.0
+      "minutes": 3
     },
     {
-      "tag": "WASH"
+      "tag": "ADDITION",
+      "additions": [
+        {
+          "solution": {
+            "gramsGelatin": 11,
+            "water": 100
+          },
+          "rate": {
+            "amountAdded": 1.0,
+            "overSeconds": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "tag": "REST",
+      "minutes": 90
+    },
+    {
+      "tag": "ADDITION",
+      "additions": [
+        {
+          "solution": {
+            "salts": [
+              {
+                "tag": "KI",
+                "gramAmount": 0.05
+              }
+            ],
+            "water": 10
+          },
+          "rate": {
+            "amountAdded": 1.0,
+            "overSeconds": 0.0
+          }
+        }
+      ]
     },
     {
       "tag": "TEMPERATURE",
-      "setCelsius": 45.0
+      "setCelsius": 60.0
     },
     {
       "tag": "REST",
-      "minutes": 60.0
+      "minutes": 20.0
     }
   ]
 ]
