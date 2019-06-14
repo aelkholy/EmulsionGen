@@ -26,7 +26,16 @@
           }
         ],
       "water": 0.0,
-      "celsius": 0.0
+      "celsius": 0.0,
+      "pH": [
+        {
+          "name": "Citric Acid",
+          "amount": 1,
+          "unit": "MILLILITER",
+          "conc": 0.20
+        },
+        5.5
+      ]
   },
   [
     {
@@ -53,7 +62,7 @@
     },
     {
       "tag": "REST",
-      "minutes": 0.0
+      "minutes": 0
     },
     {
       "tag": "WASH"

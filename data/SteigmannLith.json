@@ -13,16 +13,20 @@
             "amount": 2.0,
             "unit": "MILLILITER",
             "conc": 0.1
-          },
-          {
-            "name": "HCl",
-            "amount": 2.0,
-            "unit": "MILLILITER",
-            "conc": 0.37
           }
+          
         ],
       "water": 425.0,
-      "celsius": 55.0
+      "celsius": 55.0,
+      "pH": [
+        {
+          "name": "HCl",
+          "amount": 2.0,
+          "unit": "MILLILITER",
+          "conc": 0.37
+        },
+        null
+      ]
   },
   [
     {

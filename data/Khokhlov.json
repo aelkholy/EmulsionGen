@@ -2,19 +2,18 @@
   {
       "gramsGelatin": 40,
       "water": 800,
-      "celsius": 25
+      "celsius": 25,
+      "pH": [
+        {
+          "name": "Citric Acid",
+          "amount": 1,
+          "unit": "MILLILITER",
+          "conc": 0.20
+        },
+        5.5
+      ]
   },
   [
-    {
-      "tag": "PH",
-      "addition": {
-        "name": "Citric Acid",
-        "amount": null,
-        "unit": "MILLILITER",
-        "conc": null
-      },
-      "pH": 5.5
-    },
     {
       "tag": "ADDITION",
       "additions": [

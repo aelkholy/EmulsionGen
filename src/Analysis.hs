@@ -84,7 +84,7 @@ analyzeStates stateOne stateTwo = do
   return stateTwo
 
 analyzeState :: [E.State] -> String
-analyzeState (E.NOTHING s a t p :xs) = unlines [
+analyzeState (E.NOTHING s a t :xs) = unlines [
       "Nothing"
   ]
 analyzeState states@(E.NORMAL{}:_) = unlines $ [
@@ -178,9 +178,6 @@ nextStep soln (Step.TEMPERATURE newTemp) = do
   return soln
 nextStep soln (Step.REST minutes) = do
   tell $ unlines [ unwords ["REST FOR", show minutes, "MINUTES"] ]
-  return soln
-nextStep soln (Step.PH c ph) = do
-  tell $ unlines [ unlines [unwords ["SET PH TO", show ph], unwords ["BY ADDING", prettyChemical c]] ]
   return soln
 nextStep soln Step.WASH = do
   tell $ unlines ["WASH EMULSION"]

@@ -29,6 +29,7 @@ instance Show PowerHydrogen where
     | x == 7 = unwords ["pH", show x, "(neutral)"]
     | x >= 3.5 = unwords ["pH", show x, "(slightly acidic)"]
     | x >= 0 = unwords ["pH", show x, "(very acidic)"]
+  show _ = "UNKNOWN PH"
 instance Ord PowerHydrogen where compare (PH x) (PH y) = compare x y
 instance Eq PowerHydrogen where (==) (PH x) (PH y) = x == y
 

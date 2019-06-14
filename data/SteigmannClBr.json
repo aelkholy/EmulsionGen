@@ -1,0 +1,79 @@
+[
+  {
+      "gramsGelatin": 10,
+      "salts": [
+        {
+          "tag": "KBr",
+          "gramAmount": 8.7
+        },
+        {
+          "tag": "NaCl",
+          "gramAmount": 9.0
+        }
+      ],
+      "otherChemicals": [
+          {
+            "name": "Cadmium Chloride",
+            "amount": 0.5,
+            "unit": "GRAM",
+            "conc": null
+          }
+        ],
+      "water": 300,
+      "pH": [
+        {
+          "name": "Citric Acid",
+          "amount": 1,
+          "unit": "MILLILITER",
+          "conc": 0.20
+        },
+        null
+      ]
+  },
+  [
+    {
+      "tag": "TEMPERATURE",
+      "setCelsius": 60
+    },
+    {
+      "tag": "ADDITION",
+      "additions": [
+        {
+          "solution": {
+            "silverNitrate": {
+                "gramAmount": 25.0
+            },
+            "water": 250.0
+          },
+          "rate": {
+            "amountAdded": 1.0,
+            "overSeconds": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "tag": "ADDITION",
+      "additions": [
+        {
+          "solution": {
+            "gramsGelatin": 65,
+            "water": 250.0
+          },
+          "rate": {
+            "amountAdded": 1.0,
+            "overSeconds": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "tag": "TEMPERATURE",
+      "setCelsius": 65.0
+    },
+    {
+      "tag": "REST",
+      "minutes": 55
+    }
+  ]
+]

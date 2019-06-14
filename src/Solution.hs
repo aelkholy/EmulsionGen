@@ -29,7 +29,8 @@ data Solution = SOLUTION {
   gramsGelatin :: Maybe Double,
   otherChemicals :: Maybe [ChemicalModifier],
   water :: Maybe Double,
-  silverHalides :: Maybe [SilverHalide]
+  silverHalides :: Maybe [SilverHalide],
+  pH :: Maybe (ChemicalModifier, Maybe PowerHydrogen)
 } deriving (Show, Eq, Generic, ToJSON, FromJSON)
 
 prettySolution :: Solution -> String
@@ -40,7 +41,8 @@ prettySolution s =
         others = fmap (unwords . prettyChemicals) (otherChemicals s)
         dihydrogenMonoxide = fmap (("-In " ++) . (\x -> show x ++ "ml water")) (water s)
         halides = fmap (unwords . prettyHalides) (silverHalides s)
-    in unlines $ map ("-" ++) (catMaybes [salty, nitrate, gelatin, others, dihydrogenMonoxide, halides])
+        ph = fmap (show . snd) (pH s) 
+    in unlines $ map ("-" ++) (catMaybes [salty, nitrate, gelatin, others, dihydrogenMonoxide, halides, ph])
 
 -- Reactions
 
@@ -59,7 +61,8 @@ addSolutions soln newSoln =
     gramsGelatin = Just $ sum . catMaybes $ [gramsGelatin soln, gramsGelatin newSoln],
     silverHalides = Just $ mergeHalides $ previousHalides ++ generatedHalides,
     otherChemicals = Just $ nub $ concat $ catMaybes [otherChemicals soln, otherChemicals newSoln],
-    water = Just $ sum . catMaybes $ [water soln, water newSoln]
+    water = Just $ sum . catMaybes $ [water soln, water newSoln],
+    pH = pH soln
   }
 
 saltsToHalides :: (SilverNitrate, [Salt]) -> [(SilverNitrate, SilverHalide)]
@@ -89,11 +92,12 @@ saltReaction nitrate (x:xs) = leftoverSalt : saltReaction leftoverNitrate xs
 
 
 washSolution :: Solution -> Solution
-washSolution (SOLUTION salts nitrate gelatin others water halides) = SOLUTION {
+washSolution (SOLUTION salts nitrate gelatin others water halides ph) = SOLUTION {
   salts = Just [],
   silverNitrate = Just SILVERNITRATE {Ingredients.SilverNitrate.gramAmount = 0.0},
   gramsGelatin = gelatin,
   otherChemicals = others,
   water = water,
-  silverHalides = halides
+  silverHalides = halides,
+  pH = Nothing
 }

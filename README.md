@@ -46,8 +46,9 @@ $ stack exec EmulsionGen data/MowreyBrovira.json
 ```
 
 ## Project TODOs ##
--Support stirring
--ChemicalModifiers in something other than water
+- Support stirring
+- ChemicalModifiers in something other than water
+- Null values in concentration / amount of ph will cause it to fail grouping states
 
 # Contributing #
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of
