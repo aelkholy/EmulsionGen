@@ -41,14 +41,14 @@ $ stack test --test-arguments "--help"
 
 ## Example usage
 
+_For analysis of an emulsion_
+
 ```bash
-$ stack exec EmulsionGen data/MowreyBrovira.json
+$ stack exec -- EmulsionGen -f data/MowreyBrovira.json -A
 ```
 
 ## Project TODOs ##
 - Support stirring
-- ChemicalModifiers in something other than water
-- Null values in concentration / amount of ph will cause it to fail grouping states
 
 # Contributing #
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of

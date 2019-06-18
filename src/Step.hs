@@ -18,7 +18,7 @@ import qualified Addition             as A
 
 data Step = TEMPERATURE {setCelsius :: Temperature}
  | ADDITION {additions :: [A.Addition]}
- | REST {minutes :: Minute}
+ | REST {minutes :: Minute, stirring :: Maybe Bool}
  | WASH deriving (Generic, Show, ToJSON, FromJSON)
 
 moveStep :: S.Solution -> Step -> S.Solution

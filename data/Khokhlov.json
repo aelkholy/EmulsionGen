@@ -55,6 +55,7 @@
               {
                 "name": "PMT",
                 "amount": 0.042,
+                "medium": "Ethylene Glycol 1%",
                 "unit": "GRAM",
                 "conc": null
               }

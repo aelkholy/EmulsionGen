@@ -31,7 +31,10 @@ data Solution = SOLUTION {
   water :: Maybe Double,
   silverHalides :: Maybe [SilverHalide],
   pH :: Maybe (ChemicalModifier, Maybe PowerHydrogen)
-} deriving (Show, Eq, Generic, ToJSON, FromJSON)
+} deriving (Show, Generic, ToJSON, FromJSON)
+
+instance Eq Solution where
+    (==) (SOLUTION s sn g o w sh _) (SOLUTION st snt gt ot wt sht _) = s == st && sn == snt && g == gt && o == ot && w == wt && sh == sht
 
 prettySolution :: Solution -> String
 prettySolution s = 
