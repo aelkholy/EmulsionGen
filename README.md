@@ -48,7 +48,7 @@ $ stack exec -- EmulsionGen -f data/MowreyBrovira.json -A
 ```
 
 ## Project TODOs ##
-- Support stirring
+- generating emulsions
 
 # Contributing #
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of

@@ -47,10 +47,15 @@
           },
           "rate": {
             "amountAdded": 1.0,
-            "overSeconds": 0.0
+            "overSeconds": 0.0,
+            "stirring": true
           }
         }
       ]
+    },
+    {
+      "tag": "STIRRING",
+      "seconds": 30
     },
     {
       "tag": "ADDITION",

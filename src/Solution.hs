@@ -1,5 +1,4 @@
-{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass, LambdaCase #-}
 module Solution (
     Solution(..)
   , saltReaction

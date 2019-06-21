@@ -49,6 +49,8 @@ nextState :: State -> Step -> State
 nextState currentStage (TEMPERATURE setCelsius) = case currentStage of
                                                   w@(GENERICWASH s a) -> DIGESTION { solution = S.washSolution $ mixStage w, additionalSolutions=[], duration = Nothing, temperature = Just setCelsius}
                                                   other -> other { temperature = Just setCelsius }
+-- Stirring
+nextState currentState (STIRRING t) = currentState
 -- Deal with setting the duration
 nextState currentStage (REST minutes) = case currentStage of
                                             NOTHING{} -> currentStage

@@ -18,13 +18,15 @@ import qualified Addition             as A
 
 data Step = TEMPERATURE {setCelsius :: Temperature}
  | ADDITION {additions :: [A.Addition]}
- | REST {minutes :: Minute, stirring :: Maybe Bool}
+ | REST {minutes :: Minute}
+ | STIRRING {seconds :: Second}
  | WASH deriving (Generic, Show, ToJSON, FromJSON)
 
 moveStep :: S.Solution -> Step -> S.Solution
 moveStep soln (TEMPERATURE t) = soln
 moveStep soln (REST t) = soln
 -- moveStep soln (PH c ph) = soln {S.otherChemicals = fmap (c:) (S.otherChemicals soln)}
+moveStep soln (STIRRING t) = soln
 moveStep soln WASH = S.washSolution soln
 moveStep soln (ADDITION sols) = foldl S.addSolutions x xs
     where x = A.solution $ head sols

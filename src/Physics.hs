@@ -18,7 +18,7 @@ type Second = Integer
 type Minute = Integer
 type Temperature = Double
 data Unit = GRAM | MILLILITER  deriving (Generic, Show, Eq, ToJSON, FromJSON)
-data Rate = RATE { amountAdded :: Double, overSeconds :: Second } deriving (Generic, Show, Eq, ToJSON, FromJSON) -- percent / over time minutes
+data Rate = RATE { amountAdded :: Double, overSeconds :: Second, stirring :: Maybe Bool } deriving (Generic, Show, Eq, ToJSON, FromJSON) -- percent / over time minutes
 
 newtype PowerHydrogen = PH Double deriving (Generic, ToJSON, FromJSON)
 
@@ -51,5 +51,15 @@ prettyTemperature :: Temperature -> String
 prettyTemperature t = unwords [show t, "Celsius"]
 
 prettyRate :: Rate -> String
-prettyRate (RATE amountAdded 0) = unwords [show $ amountAdded * 100, "%", "immediately"]
-prettyRate (RATE amountAdded overSeconds) = unwords [show $ amountAdded * 100, "%", "over", show overSeconds, "seconds"]
+prettyRate (RATE amountAdded 0 s) = unwords [show $ amountAdded * 100, "%", "immediately", result]
+    where result = if (stirring s) then "with stirring" else "without stirring"
+          stirring x = case x of
+                             Just True  -> True
+                             Just False -> False
+                             Nothing    -> False
+prettyRate (RATE amountAdded overSeconds s) = unwords [show $ amountAdded * 100, "%", "over", show overSeconds, "seconds", result]
+    where result = if (stirring s) then "with stirring" else "without stirring"
+          stirring x = case x of
+                             Just True  -> True
+                             Just False -> False
+                             Nothing    -> False

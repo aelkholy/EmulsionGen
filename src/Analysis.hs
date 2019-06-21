@@ -179,6 +179,9 @@ nextStep soln (Step.TEMPERATURE newTemp) = do
 nextStep soln (Step.REST minutes) = do
   tell $ unlines [ unwords ["REST FOR", show minutes, "MINUTES"] ]
   return soln
+nextStep soln (Step.STIRRING seconds) = do
+  tell $ unlines [ unwords ["STIR FOR", show seconds, "SECONDS"] ]
+  return soln
 nextStep soln Step.WASH = do
   tell $ unlines ["WASH EMULSION"]
   return $ S.washSolution soln
